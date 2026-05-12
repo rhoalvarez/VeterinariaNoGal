@@ -1,0 +1,46 @@
+﻿@model VeterinariaNoGal.Models.Venta
+@{
+    ViewData["Title"] = "Editar Venta";
+}
+
+<div class="container mt-4">
+    <h2>Editar Venta #@Model.IdVentas</h2>
+
+    <form method="post" action="/Venta/Editar">
+        <input type="hidden" name="IdVentas" value="@Model.IdVentas" />
+        <input type="hidden" name="IdCliente" value="@Model.IdCliente" />
+        <input type="hidden" name="Total" value="@Model.Total" />
+
+        <div class="mb-3">
+            <label>Cliente</label>
+            <input type="text" class="form-control" value="@Model.NombreCliente @Model.ApellidoCliente" disabled />
+        </div>
+        <div class="mb-3">
+            <label>Total</label>
+            <input type="text" class="form-control" value="$@Model.Total.ToString("N2")" disabled />
+        </div>
+        <div class="mb-3">
+            <label>Forma de Pago</label>
+            <select name="FormaPago" class="form-control">
+                <option value="Efectivo" selected="@(Model.FormaPago == "Efectivo")">Efectivo</option>
+                <option value="Tarjeta" selected="@(Model.FormaPago == "Tarjeta")">Tarjeta</option>
+                <option value="Transferencia" selected="@(Model.FormaPago == "Transferencia")">Transferencia</option>
+                <option value="Cuotas" selected="@(Model.FormaPago == "Cuotas")">Cuotas</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Estado de Pago</label>
+            <select name="EstadoPago" class="form-control">
+                <option value="Pendiente" selected="@(Model.EstadoPago == "Pendiente")">Pendiente</option>
+                <option value="Pagado" selected="@(Model.EstadoPago == "Pagado")">Pagado</option>
+                <option value="Cancelado" selected="@(Model.EstadoPago == "Cancelado")">Cancelado</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Observación</label>
+            <textarea name="Observacion" class="form-control" rows="3">@Model.Observacion</textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Guardar cambios</button>
+        <a href="/Venta/Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

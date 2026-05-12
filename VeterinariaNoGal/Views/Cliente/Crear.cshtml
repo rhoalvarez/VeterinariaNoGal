@@ -1,0 +1,85 @@
+﻿@model VeterinariaNoGal.Models.Cliente
+@{
+    ViewData["Title"] = "Nuevo Cliente";
+    var especies = ViewBag.Especies as List<VeterinariaNoGal.Models.Especie>;
+}
+
+<div class="container mt-4">
+    <h2>Nuevo Cliente</h2>
+
+    <form method="post" action="/Cliente/Crear">
+
+        <div style="background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); border-left: 5px solid #2d5a27;">
+            <h5 style="color: #2d5a27; margin-bottom: 15px;">👤 Datos del Cliente</h5>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label>Nombre completo</label>
+                    <input type="text" name="Nombre" class="form-control" required placeholder="Ej: Juan Pérez" />
+                </div>
+                <div class="col-md-6">
+                    <label>Teléfono</label>
+                    <input type="text" name="Telefono" class="form-control" required placeholder="Ej: 3814123456" />
+                </div>
+            </div>
+        </div>
+
+        <div style="background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); border-left: 5px solid #4a7c3f;">
+            <h5 style="color: #2d5a27; margin-bottom: 15px;">🐾 Datos de la Mascota</h5>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label>Nombre</label>
+                    <input type="text" name="NombreMascota" class="form-control" placeholder="Ej: Firulais" />
+                </div>
+                <div class="col-md-3">
+                    <label>Especie</label>
+                    <select name="IdEspecie" class="form-control">
+                        @if (especies != null)
+                        {
+                            @foreach (var e in especies)
+                            {
+                                <option value="@e.IdEspecies">@e.Descripcion</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Sexo</label>
+                    <select name="SexoMascota" class="form-control">
+                        <option value="M">Macho</option>
+                        <option value="H">Hembra</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label>Fecha de Nacimiento</label>
+                    <input type="date" name="FechaNacMascota" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div style="background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); border-left: 5px solid #8b6914;">
+            <h5 style="color: #8b6914; margin-bottom: 15px;">📋 Primera Visita (opcional)</h5>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label>Fecha de consulta</label>
+                    <input type="date" name="FechaConsulta" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label>Motivo</label>
+                    <input type="text" name="MotivoConsulta" class="form-control" placeholder="Ej: Control anual" />
+                </div>
+                <div class="col-md-3">
+                    <label>Diagnóstico</label>
+                    <input type="text" name="Diagnostico" class="form-control" placeholder="Ej: Sano" />
+                </div>
+                <div class="col-md-3">
+                    <label>Tratamiento</label>
+                    <input type="text" name="Tratamiento" class="form-control" placeholder="Ej: Vacuna antirrábica" />
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Guardar todo</button>
+        <a href="/Cliente/Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+

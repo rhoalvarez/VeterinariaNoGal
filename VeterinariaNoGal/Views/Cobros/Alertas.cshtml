@@ -1,0 +1,323 @@
+﻿@model List<VeterinariaNoGal.Models.CuotaCobro>
+@{
+    ViewData["Title"] = "Alertas de Cobros";
+    var vencidas = Model.Where(c => c.Alerta == "VENCIDA").ToList();
+    var hoy = Model.Where(c => c.Alerta == "VENCE HOY").ToList();
+    var proximas = Model.Where(c => c.Alerta == "PROXIMA A VENCER").ToList();
+    var pagadas = Model.Where(c => c.Alerta == "PAGADA").ToList();
+    var alDia = Model.Where(c => c.Alerta != "VENCIDA" && c.Alerta != "VENCE HOY" && c.Alerta != "PROXIMA A VENCER" && c.Alerta != "PAGADA").ToList();
+}
+
+<style>
+    .tabla-alertas td, .tabla-alertas th {
+        padding: 7px 11px;
+        vertical-align: middle;
+        font-size: 0.87rem;
+    }
+
+    .badge-estado {
+        font-size: 0.76rem;
+        padding: 5px 10px;
+        border-radius: 20px;
+    }
+
+    .saldo-vencida {
+        color: #c0392b;
+        font-weight: 700;
+    }
+
+    .saldo-hoy {
+        color: #e67e22;
+        font-weight: 700;
+    }
+
+    .saldo-proxima {
+        color: #2980b9;
+        font-weight: 700;
+    }
+
+    .saldo-aldia {
+        color: #27ae60;
+        font-weight: 600;
+    }
+
+    .seccion-bloque {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        margin-bottom: 24px;
+    }
+
+    .seccion-titulo {
+        font-size: 0.95rem;
+        font-weight: 700;
+        padding: 8px 14px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .resumen-card {
+        border-radius: 12px;
+        padding: 16px 20px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        margin-bottom: 20px;
+    }
+
+    .resumen-num {
+        font-size: 2rem;
+        font-weight: 800;
+    }
+
+    .resumen-text {
+        font-size: 0.82rem;
+        color: #666;
+        margin-top: 2px;
+    }
+</style>
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="font-weight:800; border-left:5px solid #2d5a27; padding-left:12px;">🔔 Alertas de Cobros</h2>
+        <a href="/Home/Index" class="btn btn-secondary">← Volver</a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-6 col-md-2">
+            <div class="resumen-card" style="background:#fdecea; border:1px solid #f5c6cb;">
+                <div class="resumen-num text-danger">@vencidas.Count</div>
+                <div class="resumen-text">Vencidas</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-2">
+            <div class="resumen-card" style="background:#fff8e1; border:1px solid #ffe082;">
+                <div class="resumen-num" style="color:#f39c12;">@hoy.Count</div>
+                <div class="resumen-text">Vencen hoy</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="resumen-card" style="background:#e3f2fd; border:1px solid #90caf9;">
+                <div class="resumen-num text-info">@proximas.Count</div>
+                <div class="resumen-text">Próximas a vencer</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-2">
+            <div class="resumen-card" style="background:#e8f5e9; border:1px solid #a5d6a7;">
+                <div class="resumen-num text-success">@alDia.Count</div>
+                <div class="resumen-text">Al día</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="resumen-card" style="background:#f3e5f5; border:1px solid #ce93d8;">
+                <div class="resumen-num" style="color:#8e24aa;">@pagadas.Count</div>
+                <div class="resumen-text">Pagadas</div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div style="background:white; border-radius:15px; padding:40px; text-align:center; box-shadow:0 2px 15px rgba(0,0,0,0.1);">
+            <div style="font-size:50px;">✅</div>
+            <h4 style="color:#2d5a27; margin-top:15px;">No hay cuotas pendientes</h4>
+            <p style="color:#888;">Todos los cobros están al día</p>
+        </div>
+    }
+    else
+    {
+        @if (vencidas.Any())
+        {
+            <div class="seccion-bloque" style="border-left:5px solid #e74c3c;">
+                <div class="seccion-titulo" style="background:#fdecea; color:#e74c3c;">
+                    🔴 Cuotas Vencidas <span class="badge bg-danger">@vencidas.Count</span>
+                </div>
+                <table class="table table-hover mb-0 tabla-alertas">
+                    <thead class="table-dark">
+                        <tr><th>Cliente</th><th>Concepto</th><th>Cuota N°</th><th>Vencimiento</th><th>Monto</th><th>Interés</th><th>Total</th><th>Saldo</th><th>Estado</th><th>Pagar</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cuota in vencidas)
+                        {
+                            <tr>
+                                <td><b>@cuota.NombreCliente</b><br /><small style="color:#888">📱 @cuota.Telefono</small></td>
+                                <td>@cuota.Concepto</td>
+                                <td style="text-align:center">@cuota.NumeroCuota</td>
+                                <td>@cuota.FechaVencimiento.ToString("dd/MM/yyyy")</td>
+                                <td>$@cuota.MontoCuota.ToString("N2")</td>
+                                <td style="text-align:center">@cuota.Interes %</td>
+                                <td>$@cuota.MontoConInteres.ToString("N2")</td>
+                                <td><strong class="saldo-vencida">$@cuota.SaldoPendiente.ToString("N2")</strong></td>
+                                <td><span class="badge bg-danger badge-estado">VENCIDA</span></td>
+                                <td>
+                                    <form method="post" action="/Cobros/PagarCuota" style="display:flex;gap:5px;">
+                                        <input type="hidden" name="idCuota" value="@cuota.IdCuota" />
+                                        <input type="number" name="montoPago" class="form-control form-control-sm" style="width:90px"
+                                               value="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
+                                               step="0.01" min="0.01"
+                                               max="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
+                                        <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('¿Confirmar pago?')">✅ Pagar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        @if (hoy.Any())
+        {
+            <div class="seccion-bloque" style="border-left:5px solid #f39c12;">
+                <div class="seccion-titulo" style="background:#fff8e1; color:#f39c12;">
+                    🟡 Vencen Hoy <span class="badge" style="background:#f39c12;">@hoy.Count</span>
+                </div>
+                <table class="table table-hover mb-0 tabla-alertas">
+                    <thead class="table-dark">
+                        <tr><th>Cliente</th><th>Concepto</th><th>Cuota N°</th><th>Vencimiento</th><th>Monto</th><th>Interés</th><th>Total</th><th>Saldo</th><th>Estado</th><th>Pagar</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cuota in hoy)
+                        {
+                            <tr>
+                                <td><b>@cuota.NombreCliente</b><br /><small style="color:#888">📱 @cuota.Telefono</small></td>
+                                <td>@cuota.Concepto</td>
+                                <td style="text-align:center">@cuota.NumeroCuota</td>
+                                <td>@cuota.FechaVencimiento.ToString("dd/MM/yyyy")</td>
+                                <td>$@cuota.MontoCuota.ToString("N2")</td>
+                                <td style="text-align:center">@cuota.Interes %</td>
+                                <td>$@cuota.MontoConInteres.ToString("N2")</td>
+                                <td><strong class="saldo-hoy">$@cuota.SaldoPendiente.ToString("N2")</strong></td>
+                                <td><span class="badge bg-warning text-dark badge-estado">VENCE HOY</span></td>
+                                <td>
+                                    <form method="post" action="/Cobros/PagarCuota" style="display:flex;gap:5px;">
+                                        <input type="hidden" name="idCuota" value="@cuota.IdCuota" />
+                                        <input type="number" name="montoPago" class="form-control form-control-sm" style="width:90px"
+                                               value="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
+                                               step="0.01" min="0.01"
+                                               max="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
+                                        <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('¿Confirmar pago?')">✅ Pagar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        @if (proximas.Any())
+        {
+            <div class="seccion-bloque" style="border-left:5px solid #3498db;">
+                <div class="seccion-titulo" style="background:#e3f2fd; color:#3498db;">
+                    🔵 Próximas a Vencer <span class="badge bg-info">@proximas.Count</span>
+                </div>
+                <table class="table table-hover mb-0 tabla-alertas">
+                    <thead class="table-dark">
+                        <tr><th>Cliente</th><th>Concepto</th><th>Cuota N°</th><th>Vencimiento</th><th>Monto</th><th>Interés</th><th>Total</th><th>Saldo</th><th>Estado</th><th>Pagar</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cuota in proximas)
+                        {
+                            <tr>
+                                <td><b>@cuota.NombreCliente</b><br /><small style="color:#888">📱 @cuota.Telefono</small></td>
+                                <td>@cuota.Concepto</td>
+                                <td style="text-align:center">@cuota.NumeroCuota</td>
+                                <td>@cuota.FechaVencimiento.ToString("dd/MM/yyyy")</td>
+                                <td>$@cuota.MontoCuota.ToString("N2")</td>
+                                <td style="text-align:center">@cuota.Interes %</td>
+                                <td>$@cuota.MontoConInteres.ToString("N2")</td>
+                                <td><strong class="saldo-proxima">$@cuota.SaldoPendiente.ToString("N2")</strong></td>
+                                <td><span class="badge bg-info badge-estado">PRÓXIMA</span></td>
+                                <td>
+                                    <form method="post" action="/Cobros/PagarCuota" style="display:flex;gap:5px;">
+                                        <input type="hidden" name="idCuota" value="@cuota.IdCuota" />
+                                        <input type="number" name="montoPago" class="form-control form-control-sm" style="width:90px"
+                                               value="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
+                                               step="0.01" min="0.01"
+                                               max="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
+                                        <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('¿Confirmar pago?')">✅ Pagar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        @if (alDia.Any())
+        {
+            <div class="seccion-bloque" style="border-left:5px solid #27ae60;">
+                <div class="seccion-titulo" style="background:#e8f5e9; color:#27ae60;">
+                    🟢 Al Día <span class="badge bg-success">@alDia.Count</span>
+                </div>
+                <table class="table table-hover mb-0 tabla-alertas">
+                    <thead class="table-dark">
+                        <tr><th>Cliente</th><th>Concepto</th><th>Cuota N°</th><th>Vencimiento</th><th>Monto</th><th>Interés</th><th>Total</th><th>Saldo</th><th>Estado</th><th>Pagar</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cuota in alDia)
+                        {
+                            <tr>
+                                <td><b>@cuota.NombreCliente</b><br /><small style="color:#888">📱 @cuota.Telefono</small></td>
+                                <td>@cuota.Concepto</td>
+                                <td style="text-align:center">@cuota.NumeroCuota</td>
+                                <td>@cuota.FechaVencimiento.ToString("dd/MM/yyyy")</td>
+                                <td>$@cuota.MontoCuota.ToString("N2")</td>
+                                <td style="text-align:center">@cuota.Interes %</td>
+                                <td>$@cuota.MontoConInteres.ToString("N2")</td>
+                                <td><strong class="saldo-aldia">$@cuota.SaldoPendiente.ToString("N2")</strong></td>
+                                <td><span class="badge bg-success badge-estado">AL DÍA</span></td>
+                                <td>
+                                    <form method="post" action="/Cobros/PagarCuota" style="display:flex;gap:5px;">
+                                        <input type="hidden" name="idCuota" value="@cuota.IdCuota" />
+                                        <input type="number" name="montoPago" class="form-control form-control-sm" style="width:90px"
+                                               value="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
+                                               step="0.01" min="0.01"
+                                               max="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
+                                        <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('¿Confirmar pago?')">✅ Pagar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        @if (pagadas.Any())
+        {
+            <div class="seccion-bloque" style="border-left:5px solid #8e24aa;">
+                <div class="seccion-titulo" style="background:#f3e5f5; color:#8e24aa;">
+                    ✅ Pagadas <span class="badge" style="background:#8e24aa;">@pagadas.Count</span>
+                </div>
+                <table class="table table-hover mb-0 tabla-alertas">
+                    <thead class="table-dark">
+                        <tr><th>Cliente</th><th>Concepto</th><th>Cuota N°</th><th>Vencimiento</th><th>Monto</th><th>Interés</th><th>Total</th><th>Pagado</th><th>Estado</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cuota in pagadas)
+                        {
+                            <tr style="opacity:0.8;">
+                                <td><b>@cuota.NombreCliente</b><br /><small style="color:#888">📱 @cuota.Telefono</small></td>
+                                <td>@cuota.Concepto</td>
+                                <td style="text-align:center">@cuota.NumeroCuota</td>
+                                <td>@cuota.FechaVencimiento.ToString("dd/MM/yyyy")</td>
+                                <td>$@cuota.MontoCuota.ToString("N2")</td>
+                                <td style="text-align:center">@cuota.Interes %</td>
+                                <td>$@cuota.MontoConInteres.ToString("N2")</td>
+                                <td><strong style="color:#8e24aa;">$@cuota.MontoConInteres.ToString("N2")</strong></td>
+                                <td><span class="badge badge-estado" style="background:#8e24aa;">PAGADA</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
+</div>

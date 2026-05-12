@@ -1,0 +1,41 @@
+﻿@model List<VeterinariaNoGal.Models.Mascota>
+
+@{
+    ViewData["Title"] = "Mascotas";
+}
+
+<div class="container mt-4">
+    <h2>Listado de Mascotas</h2>
+    <a href="/Mascota/Crear" class="btn btn-primary mb-3">+ Nueva Mascota</a>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Nombre</th>
+                <th>Especie</th>
+                <th>Sexo</th>
+                <th>Fecha Nacimiento</th>
+                <th>Dueño</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var mascota in Model)
+            {
+                <tr>
+                    <td>@mascota.Nombre</td>
+                    <td>@mascota.Especie</td>
+                    <td>@mascota.Sexo</td>
+                    <td>@mascota.FechaNacimiento.ToString("dd/MM/yyyy")</td>
+                    <td>@mascota.NombreCliente @mascota.ApellidoCliente</td>
+                    <td>
+                        <a href="/Mascota/Editar/@mascota.Id_Mascota" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="/Mascota/Eliminar/@mascota.Id_Mascota" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que querés eliminar esta mascota?')">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+

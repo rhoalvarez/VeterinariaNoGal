@@ -1,0 +1,105 @@
+﻿@model List<VeterinariaNoGal.Models.Usuario>
+@{
+    ViewData["Title"] = "Gestión de Usuarios";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="font-weight:800; border-left:5px solid #2d5a27; padding-left:12px;">👥 Gestión de Usuarios</h2>
+        <a href="/Login/Perfil" class="btn btn-secondary">← Volver</a>
+    </div>
+
+    @if (TempData["Exito"] != null)
+    {
+        <div style="background:#e8f0e0; color:#2d5a27; border-radius:10px; padding:12px; margin-bottom:15px; text-align:center;">
+            ✅ @TempData["Exito"]
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-8">
+            <div style="background:white; border-radius:15px; padding:20px; box-shadow:0 2px 15px rgba(0,0,0,0.1); margin-bottom:20px;">
+                <table class="table table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Rol</th>
+                            <th style="text-align:center">Estado</th>
+                            <th style="text-align:center">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var u in Model)
+                        {
+                            <tr>
+                                <td><b>@u.Nombre</b></td>
+                                <td>
+                                    @if (u.Rol == "admin")
+                                    {
+                                        <span class="badge bg-danger">Admin</span>
+                                    }
+                                    else
+                                    {
+
+                                        <span class="badge bg-secondary">Usuario</span>
+                                    }
+                                </td>
+                                <td style="text-align:center">
+                                    @if (u.Estado == 1)
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                    else
+                                    {
+
+                                        <span class="badge bg-secondary">Inactivo</span>
+                                    }
+                                </td>
+                                <td style="text-align:center; display:flex; gap:5px; justify-content:center;">
+                                    <form method="post" action="/Login/ToggleUsuario">
+                                        <input type="hidden" name="idUsuario" value="@u.IdUsuario" />
+                                        <button type="submit" class="btn btn-sm @(u.Estado == 1 ? "btn-warning" : "btn-success")"
+                                                onclick="return confirm('¿Confirmar cambio de estado?')">
+                                            @(u.Estado == 1 ? "Desactivar" : "Activar")
+                                        </button>
+                                    </form>
+                                    <form method="post" action="/Login/EliminarUsuario">
+                                        <input type="hidden" name="idUsuario" value="@u.IdUsuario" />
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                onclick="return confirm('¿Eliminar usuario permanentemente?')">
+                                            🗑️
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div style="background:white; border-radius:15px; padding:20px; box-shadow:0 2px 15px rgba(0,0,0,0.1);">
+                <h5 style="color:#2d5a27; border-bottom:2px solid #e8f0e0; padding-bottom:10px; margin-bottom:20px;">➕ Nuevo Usuario</h5>
+                <form method="post" action="/Login/CrearUsuario">
+                    <div class="mb-3">
+                        <label style="color:#2d5a27; font-weight:500;">Nombre de usuario</label>
+                        <input type="text" name="nombre" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label style="color:#2d5a27; font-weight:500;">Contraseña</label>
+                        <input type="password" name="password" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label style="color:#2d5a27; font-weight:500;">Rol</label>
+                        <select name="rol" class="form-control">
+                            <option value="admin">Admin</option>
+                            <option value="usuario">Usuario</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">➕ Crear Usuario</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+﻿@model VeterinariaNoGal.Models.Historial
+@{
+    ViewData["Title"] = "Nuevo Registro Clínico";
+}
+
+<div class="container mt-4">
+    <h2>Nuevo Registro Clínico</h2>
+
+    <form method="post" action="/Historial/Crear">
+        <div class="mb-3">
+            <label>Mascota</label>
+            <select name="IdMascota" class="form-control">
+                @foreach (var m in ViewBag.Mascotas as List<VeterinariaNoGal.Models.Mascota>)
+                {
+                    <option value="@m.Id_Mascota">@m.Nombre</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>ID Turno</label>
+            <input type="number" name="IdTurno" class="form-control" value="0" />
+        </div>
+        <div class="mb-3">
+            <label>Motivo de Consulta</label>
+            <input type="text" name="MotivoConsulta" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>Diagnóstico</label>
+            <input type="text" name="Diagnostico" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>Tratamiento</label>
+            <textarea name="Tratamiento" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+            <label>Indicaciones</label>
+            <textarea name="Indicaciones" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+            <label>Observaciones</label>
+            <textarea name="Observaciones" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+            <label>Fecha de Consulta</label>
+            <input type="date" name="FechaConsulta" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>Próximo Control</label>
+            <input type="date" name="ProximoControl" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="/Historial/Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

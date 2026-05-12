@@ -1,0 +1,39 @@
+﻿@model VeterinariaNoGal.Models.Turno
+
+@{
+    ViewData["Title"] = "Editar Turno";
+}
+
+<div class="container mt-4">
+    <h2>Editar Turno</h2>
+
+    <form method="post" action="/Turno/Editar">
+        <input type="hidden" name="IdTurno" value="@Model.IdTurno" />
+        <div class="mb-3">
+            <label>Fecha</label>
+            <input type="date" name="Fecha" value="@Model.Fecha.ToString("yyyy-MM-dd")" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>Hora</label>
+            <input type="time" name="HoraTurno" value="@Model.HoraTurno.ToString(@"hh\:mm")" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>Motivo</label>
+            <input type="text" name="Motivo" value="@Model.Motivo" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>Estado</label>
+            <select name="EstadoTurno" class="form-control">
+                <option value="Pendiente" selected="@(Model.EstadoTurno == "Pendiente")">Pendiente</option>
+                <option value="Confirmado" selected="@(Model.EstadoTurno == "Confirmado")">Confirmado</option>
+                <option value="Cancelado" selected="@(Model.EstadoTurno == "Cancelado")">Cancelado</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Observación</label>
+            <textarea name="Observacion" class="form-control" rows="3">@Model.Observacion</textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Guardar cambios</button>
+        <a href="/Turno/Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

@@ -1,0 +1,62 @@
+﻿@model List<VeterinariaNoGal.Models.Cobro>
+@{
+    ViewData["Title"] = "Cobros";
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h2>💰 Cobros</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="/Cobros/Alertas" class="btn btn-danger me-2">🔔 Alertas</a>
+            <a href="/Cobros/Crear" class="btn btn-success">+ Nuevo Cobro</a>
+        </div>
+    </div>
+
+    <div style="background: white; border-radius: 15px; padding: 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Concepto</th>
+                    <th>Monto</th>
+                    <th>Forma de Pago</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cobro in Model)
+                {
+                    <tr>
+                        <td>@cobro.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>@cobro.NombreCliente</td>
+                        <td>
+                            <b>@cobro.Concepto</b>
+                            @if (!string.IsNullOrEmpty(cobro.Descripcion))
+                            {
+                                <br />
+                        
+                                <small style="color:#888">@cobro.Descripcion</small>
+                            }
+                        </td>
+                        <td>$@cobro.Monto.ToString("N2")</td>
+                        <td>@cobro.FormaPago</td>
+                        <td>
+                            @if (cobro.EstadoPago == "Pagado")
+                            {
+                                <span class="badge bg-success">Pagado</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Pendiente</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

@@ -1,0 +1,40 @@
+﻿@model List<VeterinariaNoGal.Models.Proveedor>
+@{
+    ViewData["Title"] = "Proveedores";
+}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 style="font-weight:800; border-left:5px solid #2d5a27; padding-left:12px;">🏭 Proveedores</h2>
+        <a href="/Proveedor/Crear" class="btn btn-success">+ Nuevo Proveedor</a>
+    </div>
+    <div style="background:white; border-radius:15px; padding:20px; box-shadow:0 2px 15px rgba(0,0,0,0.1); overflow:hidden;">
+        <div style="overflow-x:auto;">
+            <table class="table table-bordered table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Razón Social</th>
+                        <th>DNI/CUIT</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th style="text-align:center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td>@p.RazonSocial</td>
+                            <td>@p.Dni</td>
+                            <td>@p.Telefono</td>
+                            <td>@p.Email</td>
+                            <td style="text-align:center">
+                                <a href="/Proveedor/Eliminar/@p.IdProveedores" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('¿Seguro que querés eliminar este proveedor?')">🗑️ Eliminar</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

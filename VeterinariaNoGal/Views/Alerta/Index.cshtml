@@ -1,0 +1,59 @@
+﻿@model List<VeterinariaNoGal.Models.Alerta>
+@{
+    ViewData["Title"] = "Alertas de Deuda";
+}
+
+<div class="container mt-4">
+    <h2>Alertas de Deuda</h2>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Cliente</th>
+                <th>Teléfono</th>
+                <th>Cuota N°</th>
+                <th>Monto</th>
+                <th>Saldo Pendiente</th>
+                <th>Vencimiento</th>
+                <th>Estado</th>
+                <th>Alerta</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var alerta in Model)
+            {
+                <tr class="@(alerta.Alerta_ == "VENCIDA" ? "table-danger" : alerta.Alerta_ == "VENCE HOY" ? "table-warning" : alerta.Alerta_ == "PROXIMA A VENCER" ? "table-info" : "")">
+                    <td>@alerta.Nombre @alerta.Apellido</td>
+                    <td>@alerta.Telefono</td>
+                    <td>@alerta.NumeroCuota</td>
+                    <td>$@alerta.MontoCuota</td>
+                    <td>$@alerta.SaldoPendiente</td>
+                    <td>@alerta.VencimientoCuota.ToString("dd/MM/yyyy")</td>
+                    <td>@alerta.EstadoCuota</td>
+                    <td>
+                        @if (alerta.Alerta_ == "VENCIDA")
+                        {
+                            <span class="badge bg-danger">VENCIDA</span>
+                        }
+                        else if (alerta.Alerta_ == "VENCE HOY")
+                        {
+                            <span class="badge bg-warning text-dark">VENCE HOY</span>
+                        }
+                        else if (alerta.Alerta_ == "PROXIMA A VENCER")
+                        {
+                            <span class="badge bg-info text-dark">PRÓXIMA A VENCER</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">AL DÍA</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="/Alerta/PagarCuota/@alerta.IdCuotas" class="btn btn-success btn-sm" onclick="return confirm('¿Confirmar pago de esta cuota?')">✅ Pagar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,55 @@
+﻿@model List<VeterinariaNoGal.Models.Turno>
+
+@{
+    ViewData["Title"] = "Turnos";
+}
+
+<div class="container mt-4">
+    <h2>Listado de Turnos</h2>
+    <a href="/Turno/Crear" class="btn btn-primary mb-3">+ Nuevo Turno</a>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Mascota</th>
+                <th>Cliente</th>
+                <th>Motivo</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var turno in Model)
+            {
+                <tr>
+                    <td>@turno.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>@turno.HoraTurno.ToString(@"hh\:mm")</td>
+                    <td>@turno.NombreMascota</td>
+                    <td>@turno.NombreCliente @turno.ApellidoCliente</td>
+                    <td>@turno.Motivo</td>
+                    <td>
+                        @if (turno.EstadoTurno == "Pendiente")
+                        {
+                            <span class="badge bg-warning">Pendiente</span>
+                        }
+                        else if (turno.EstadoTurno == "Confirmado")
+                        {
+                            <span class="badge bg-success">Confirmado</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@turno.EstadoTurno</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="/Turno/Editar/@turno.IdTurno" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="/Turno/Eliminar/@turno.IdTurno" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que querés eliminar este turno?')">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

@@ -1,0 +1,30 @@
+﻿@model VeterinariaNoGal.Models.Proveedor
+@{
+    ViewData["Title"] = "Nuevo Proveedor";
+}
+
+<div class="container mt-4">
+    <h2>Nuevo Proveedor</h2>
+
+    <form method="post" action="/Proveedor/Crear">
+        <div class="mb-3">
+            <label>Razón Social</label>
+            <input type="text" name="RazonSocial" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>DNI / CUIT</label>
+            <input type="text" name="Dni" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>Teléfono</label>
+            <input type="text" name="Telefono" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>Email</label>
+            <input type="email" name="Email" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="/Proveedor/Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+

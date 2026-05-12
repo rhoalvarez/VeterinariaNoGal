@@ -1,0 +1,271 @@
+﻿@model VeterinariaNoGal.Models.Cliente
+@{
+    ViewData["Title"] = "Ficha del Cliente";
+    var mascotas = ViewBag.Mascotas as List<VeterinariaNoGal.Models.Mascota>;
+    var historiales = ViewBag.Historiales as Dictionary<int, List<VeterinariaNoGal.Models.Historial>>;
+    var turnos = ViewBag.Turnos as Dictionary<int, List<VeterinariaNoGal.Models.Turno>>;
+    var especies = ViewBag.Especies as List<VeterinariaNoGal.Models.Especie>;
+}
+
+<div class="container mt-4">
+
+    <div style="background: linear-gradient(135deg, #2d5a27, #4a7c3f); color: white; border-radius: 15px; padding: 20px; margin-bottom: 25px;">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h3 style="margin: 0;">👤 @Model.Nombre</h3>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">📱 @Model.Telefono</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="/Cliente/Index" class="btn btn-light btn-sm">← Volver</a>
+                <a href="/Cliente/Editar/@Model.Id_Cliente" class="btn btn-warning btn-sm">Editar</a>
+            </div>
+        </div>
+    </div>
+
+    <div style="background: white; border-radius: 15px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
+        <h5 style="color: #2d5a27; border-bottom: 2px solid #e8f0e0; padding-bottom: 10px;">
+            🐾 Nueva Mascota
+        </h5>
+        <form method="post" action="/Cliente/AgregarMascota">
+            <input type="hidden" name="Id_Cliente" value="@Model.Id_Cliente" />
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" name="Nombre" class="form-control" placeholder="Nombre" required />
+                </div>
+                <div class="col-md-3">
+                    <select name="Id_Especie" class="form-control">
+                        @foreach (var e in especies)
+                        {
+                            <option value="@e.IdEspecies">@e.Descripcion</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="Sexo" class="form-control">
+                        <option value="M">Macho</option>
+                        <option value="H">Hembra</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="date" name="FechaNacimiento" class="form-control" required />
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-success w-100">+</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    @foreach (var mascota in mascotas)
+    {
+        <div style="background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); border-left: 5px solid #4a7c3f;">
+            <div class="row align-items-center mb-3">
+                <div class="col-md-10">
+                    <h5 style="color: #2d5a27; margin: 0;">
+                        🐶 @mascota.Nombre
+                        <span style="font-size: 13px; color: #888; font-weight: normal;">
+                            — @mascota.Especie | @(mascota.Sexo == "M" ? "Macho" : "Hembra") |
+                            Nació: @mascota.FechaNacimiento.ToString("dd/MM/yyyy")
+                        </span>
+                    </h5>
+                </div>
+                <div class="col-md-2 text-end">
+                    <button type="button" onclick="toggleEditar(@mascota.Id_Mascota)"
+                            class="btn btn-warning btn-sm">
+                        ✏️ Editar
+                    </button>
+                </div>
+            </div>
+
+            <div id="editar-@mascota.Id_Mascota" style="display:none; background: #fff8f0; border-radius: 10px; padding: 15px; margin-bottom: 10px; border: 1px dashed #8b6914;">
+                <p style="color: #8b6914; font-weight: bold; margin-bottom: 10px;">✏️ Editar Mascota</p>
+                <form method="post" action="/Cliente/EditarMascota">
+                    <input type="hidden" name="Id_Mascota" value="@mascota.Id_Mascota" />
+                    <input type="hidden" name="Id_Cliente" value="@Model.Id_Cliente" />
+                    <input type="hidden" name="idCliente" value="@Model.Id_Cliente" />
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <input type="text" name="Nombre" value="@mascota.Nombre" class="form-control form-control-sm" required />
+                        </div>
+                        <div class="col-md-3">
+                            <select name="Id_Especie" class="form-control form-control-sm">
+                                @foreach (var e in especies)
+                                {
+                                    <option value="@e.IdEspecies">@e.Descripcion</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select name="Sexo" class="form-control form-control-sm">
+                                <option value="M" selected="@(mascota.Sexo == "M")">Macho</option>
+                                <option value="H" selected="@(mascota.Sexo == "H")">Hembra</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" name="FechaNacimiento" value="@mascota.FechaNacimiento.ToString("yyyy-MM-dd")" class="form-control form-control-sm" required />
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-success btn-sm w-100">✓</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            @if (historiales.ContainsKey(mascota.Id_Mascota) && historiales[mascota.Id_Mascota].Count > 0)
+            {
+                <div style="overflow-x:auto;">
+                    <table class="table table-sm table-bordered mb-3">
+                        <thead style="background: #e8f0e0;">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Motivo</th>
+                                <th>Diagnóstico</th>
+                                <th>Tratamiento</th>
+                                <th>Próximo Control</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var h in historiales[mascota.Id_Mascota])
+                            {
+                                <tr>
+                                    <td>@h.FechaConsulta.ToString("dd/MM/yyyy")</td>
+                                    <td>@h.MotivoConsulta</td>
+                                    <td>@h.Diagnostico</td>
+                                    <td>@h.Tratamiento</td>
+                                    <td>@h.ProximoControl.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p style="color: #888; font-size: 13px; margin-bottom: 10px;">Sin visitas registradas aún.</p>
+            }
+
+            <div style="background: #f9f9f9; border-radius: 10px; padding: 15px; border: 1px dashed #ccc; margin-bottom: 15px;">
+                <p style="color: #2d5a27; font-weight: bold; margin-bottom: 10px;">➕ Nueva Visita</p>
+                <form method="post" action="/Cliente/AgregarVisita">
+                    <input type="hidden" name="IdMascota" value="@mascota.Id_Mascota" />
+                    <input type="hidden" name="idCliente" value="@Model.Id_Cliente" />
+                    <div class="row g-2">
+                        <div class="col-md-2">
+                            <input type="date" name="FechaConsulta" class="form-control form-control-sm" required />
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" name="MotivoConsulta" class="form-control form-control-sm" placeholder="Motivo" required />
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" name="Diagnostico" class="form-control form-control-sm" placeholder="Diagnóstico" required />
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" name="Tratamiento" class="form-control form-control-sm" placeholder="Tratamiento" />
+                        </div>
+                        <div class="col-md-2">
+                            <input type="date" name="ProximoControl" class="form-control form-control-sm" />
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-success btn-sm w-100">✓</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            @* SECCIÓN TURNOS *@
+            <div style="background: #f0f7ff; border-radius: 10px; padding: 15px; border: 1px dashed #3498db;">
+                <p style="color: #2980b9; font-weight: bold; margin-bottom: 10px;">📅 Turnos</p>
+
+                @if (turnos.ContainsKey(mascota.Id_Mascota) && turnos[mascota.Id_Mascota].Count > 0)
+                {
+                    <div style="overflow-x:auto;">
+                        <table class="table table-sm table-bordered mb-3">
+                            <thead style="background: #d0e8ff;">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Motivo</th>
+                                    <th>Estado</th>
+                                    <th>Observación</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var t in turnos[mascota.Id_Mascota])
+                                {
+                                    <tr>
+                                        <td>@t.Fecha.ToString("dd/MM/yyyy")</td>
+                                        <td>@t.HoraTurno.ToString(@"hh\:mm")</td>
+                                        <td>@t.Motivo</td>
+                                        <td>
+                                            @if (t.EstadoTurno == "Confirmado")
+                                            {
+                                                <span class="badge bg-success">Confirmado</span>
+                                            }
+                                            else if (t.EstadoTurno == "Cancelado")
+                                            {
+
+                                                <span class="badge bg-danger">Cancelado</span>
+                                            }
+                                            else
+                                            {
+
+                                                <span class="badge bg-warning text-dark">Pendiente</span>
+                                            }
+                                        </td>
+                                        <td>@t.Observacion</td>
+                                        <td>
+                                            <form method="post" action="/Cliente/EliminarTurno">
+                                                <input type="hidden" name="idTurno" value="@t.IdTurno" />
+                                                <input type="hidden" name="idCliente" value="@Model.Id_Cliente" />
+                                                <button type="submit" class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('¿Eliminar turno?')">
+                                                    🗑️
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p style="color: #888; font-size: 13px; margin-bottom: 10px;">Sin turnos registrados.</p>
+                }
+
+                <p style="color: #2980b9; font-weight: bold; margin-bottom: 8px;">➕ Nuevo Turno</p>
+                <form method="post" action="/Cliente/AgregarTurno">
+                    <input type="hidden" name="idMascota" value="@mascota.Id_Mascota" />
+                    <input type="hidden" name="idCliente" value="@Model.Id_Cliente" />
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <input type="date" name="fecha" class="form-control form-control-sm" required />
+                        </div>
+                        <div class="col-md-2">
+                            <input type="time" name="horaTurno" class="form-control form-control-sm" required />
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" name="motivo" class="form-control form-control-sm" placeholder="Motivo" required />
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" name="observacion" class="form-control form-control-sm" placeholder="Observación" />
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-primary btn-sm w-100">✓</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    }
+</div>
+
+<script>
+    function toggleEditar(id) {
+        var div = document.getElementById('editar-' + id);
+        div.style.display = div.style.display === 'none' ? 'block' : 'none';
+    }
+</script>

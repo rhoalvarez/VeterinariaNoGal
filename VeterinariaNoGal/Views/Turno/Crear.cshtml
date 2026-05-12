@@ -1,0 +1,36 @@
+﻿@model VeterinariaNoGal.Models.Turno
+@{
+    ViewData["Title"] = "Nuevo Turno";
+}
+<div class="container mt-4">
+    <h2>Nuevo Turno</h2>
+    <form method="post" action="/Turno/Crear">
+        <div class="mb-3">
+            <label>Fecha</label>
+            <input type="date" name="Fecha" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>Hora</label>
+            <input type="time" name="HoraTurno" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>Mascota</label>
+            <select name="Id_Mascota" class="form-control">
+                @foreach (var m in ViewBag.Mascotas as List<VeterinariaNoGal.Models.Mascota>)
+                {
+                    <option value="@m.Id_Mascota">@m.Nombre (@m.NombreCliente @m.ApellidoCliente)</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Motivo</label>
+            <input type="text" name="Motivo" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>Observación</label>
+            <textarea name="Observacion" class="form-control" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="/Turno/Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

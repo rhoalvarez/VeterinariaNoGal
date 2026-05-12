@@ -1,0 +1,74 @@
+﻿@model List<VeterinariaNoGal.Models.CuentaCorriente>
+<div style="overflow-x: auto;">
+    <table class="table table-hover mb-0 tabla-cc">
+        <thead>
+            <tr>
+                <th>Tipo</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Concepto</th>
+                <th style="text-align:right">Monto</th>
+                <th style="text-align:right">Saldo Pendiente</th>
+                <th style="text-align:center">Cuotas</th>
+                <th style="text-align:center">Estado</th>
+                <th style="text-align:center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (item.Tipo == "Venta")
+                        {
+                            <span class="badge bg-info">🛒 Venta</span>
+                        }
+                        else
+                        {
+
+                            <span class="badge bg-warning text-dark">💰 Cobro</span>
+                        }
+                    </td>
+                    <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td><b>@item.Cliente</b></td>
+                    <td>@item.Concepto</td>
+                    <td style="text-align:right">$@item.Monto.ToString("N2")</td>
+                    <td style="text-align:right">
+                        @if (item.SaldoTotal > 0)
+                        {
+                            <strong style="color:#c0392b;">$@item.SaldoTotal.ToString("N2")</strong>
+                        }
+                        else
+                        {
+
+                            <strong style="color:#27ae60;">$0,00</strong>
+                        }
+                    </td>
+                    <td style="text-align:center">@item.TotalCuotas</td>
+                    <td style="text-align:center">
+                        @if (item.EstadoPago == "Pagado")
+                        {
+                            <span class="badge bg-success">Pagado</span>
+                        }
+                        else
+                        {
+
+                            <span class="badge bg-warning text-dark">Pendiente</span>
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @if (item.Tipo == "Venta")
+                        {
+                            <a href="/Venta/Detalle/@item.Id" class="btn btn-info btn-sm">Ver</a>
+                        }
+                        else
+                        {
+
+                            <a href="/Cobros/Detalle/@item.Id" class="btn btn-info btn-sm">Ver</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

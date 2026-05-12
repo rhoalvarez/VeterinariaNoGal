@@ -1,0 +1,244 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - VeterinariaNoGal</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/VeterinariaNoGal.styles.css" asp-append-version="true" />
+    <style>
+        .alerta-badge {
+            position: absolute;
+            top: 2px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 1.5s infinite;
+        }
+
+        @@keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .nav-bell {
+            position: relative;
+            display: inline-block;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            border-radius: 30px;
+            overflow: hidden;
+            max-width: 200px;
+            margin: 0 auto 10px auto;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+
+        .social-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin: 3px;
+        }
+
+        .social-text {
+            font-weight: 700;
+            font-size: 13px;
+            padding: 0 16px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            color: white;
+        }
+
+        .footer-link {
+            color: white !important;
+            display: block;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+            .footer-link:hover {
+                color: #c8a97e !important;
+            }
+
+        .footer-title {
+            color: white !important;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        @@media (max-width: 768px) {
+            .social-btn {
+                max-width: 140px;
+                border-radius: 20px;
+            }
+
+            .social-icon {
+                width: 30px;
+                height: 30px;
+                margin: 2px;
+            }
+
+                .social-icon svg {
+                    width: 16px;
+                    height: 16px;
+                }
+
+            .social-text {
+                font-size: 11px;
+                height: 36px;
+                padding: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <img src="/images/logo.png" style="height: 50px; margin-right: 10px;" />
+                    Agroveterinaria El Nogal
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Inicio</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav align-items-center">
+                        @if (Context.Session.GetString("usuario") != null)
+                        {
+                            int alertas = VeterinariaNoGal.Models.AlertaHelper.ContarAlertasPendientes();
+                            <li class="nav-item me-3">
+                                <a href="/Cobros/Alertas" class="nav-bell" title="Alertas de cuotas">
+                                    <span style="font-size:1.3rem;">🔔</span>
+                                    @if (alertas > 0)
+                                    {
+                                        <span class="alerta-badge">@alertas</span>
+                                    }
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="/Login/Perfil">👤 @Context.Session.GetString("usuario")</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Login/Logout" style="color: #ffcccc;">🚪 Cerrar Sesión</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container-body">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer style="background: linear-gradient(135deg, #1e4d18, #3a7a2e); padding: 20px 0; margin-top: 40px;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+            <div class="row align-items-center">
+
+                <!-- Logo -->
+                <div class="col-md-3 text-center mb-3 mb-md-0">
+                    <img src="/images/logo.png" style="height: 60px;" />
+                    <p style="color: white !important; font-size: 13px; margin-top: 5px; font-weight: 600;">Agroveterinaria El Nogal</p>
+                </div>
+
+                <!-- Navegación -->
+                <div class="col-md-3 text-center mb-3 mb-md-0">
+                    <h6 class="footer-title">Navegación</h6>
+                    <a href="/Proveedor/Index" class="footer-link">Proveedores</a>
+                    <a href="/Producto/Index" class="footer-link">Productos</a>
+                    <a href="/Historial/Index" class="footer-link">Historial Clínico</a>
+                </div>
+
+                <!-- Contacto -->
+                <div class="col-md-3 text-center mb-3 mb-md-0">
+                    <h6 class="footer-title">Contacto</h6>
+
+                    <!-- Instagram -->
+                    <a href="https://www.instagram.com/agroveterinariaelnogal2026" target="_blank" class="social-btn">
+                        <div class="social-icon" style="background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="white">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                            </svg>
+                        </div>
+                        <span class="social-text" style="background: linear-gradient(45deg, #833ab4, #fd1d1d, #fcb045);">Instagram</span>
+                    </a>
+
+                    <!-- Facebook -->
+                    <a href="https://www.facebook.com/agroveterinarielnogal" target="_blank" class="social-btn">
+                        <div class="social-icon" style="background: #1877F2;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="white">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                            </svg>
+                        </div>
+                        <span class="social-text" style="background: #1877F2;">Facebook</span>
+                    </a>
+                </div>
+
+                <!-- Copyright -->
+                <div class="col-md-3 text-center">
+                    <p style="color: white !important; font-size: 12px; font-weight: 700; margin: 0;">© 2026 Agroveterinaria El Nogal</p>
+                    <p style="color: white !important; font-size: 11px; font-weight: 600; margin: 0;">Todos los derechos reservados</p>
+                </div>
+
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- Burbuja WhatsApp fija -->
+    <a href="https://wa.me/543814685142" target="_blank"
+       style="position: fixed; bottom: 25px; right: 25px; background: #25D366; color: white; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 9999; text-decoration: none;"
+       title="Contactanos por WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="35px" height="35px">
+            <path fill="#fff" d="M4.868,43.303l2.694-9.835C5.9,30.59,5.026,27.324,5.027,23.979C5.032,13.514,13.548,5,24.014,5c5.079,0.002,9.845,1.979,13.43,5.566c3.584,3.588,5.558,8.356,5.556,13.428c-0.004,10.465-8.522,18.98-18.986,18.98c-0.001,0,0,0,0,0h-0.008c-3.177-0.001-6.3-0.798-9.073-2.311L4.868,43.303z" />
+            <path fill="#25D366" d="M4.868,43.803c-0.132,0-0.26-0.052-0.355-0.148c-0.125-0.127-0.174-0.312-0.127-0.483l2.639-9.636c-1.636-2.906-2.499-6.206-2.497-9.556C4.532,13.238,13.273,4.5,24.014,4.5c5.21,0.002,10.105,2.031,13.784,5.713c3.679,3.683,5.704,8.577,5.702,13.781c-0.004,10.741-8.746,19.48-19.486,19.48c-3.189-0.001-6.344-0.788-9.144-2.277l-9.875,2.589C4.953,43.798,4.911,43.803,4.868,43.803z" />
+            <path fill="#fff" d="M19.005,34.942c0,0,0.185,0.11,0.476,0.24c0,0,3.148,1.322,6.533,1.086c4.44-0.308,7.448-2.564,9.236-5.446c0.892-1.441,1.409-3.102,1.416-4.848C36.67,21.1,33.15,17,29.01,15.5c-1.261-0.462-2.643-0.734-4.064-0.737C18.718,14.751,13.5,19.884,13.5,26.19c0,2.213,0.632,4.29,1.737,6.05L13.5,38l5.541-1.45C19.005,36.55,19.005,34.942,19.005,34.942z" />
+            <path fill="#25D366" d="M28.28,28.527c-0.181,0.501-1.05,0.962-1.467,1.024c-0.416,0.062-0.94,0.088-1.516-0.096c-0.35-0.11-0.799-0.256-1.37-0.499c-2.398-1.035-3.963-3.44-4.082-3.598c-0.118-0.158-0.967-1.286-0.967-2.454s0.611-1.739,0.828-1.976c0.217-0.237,0.473-0.296,0.63-0.296s0.315,0.003,0.453,0.009c0.145,0.007,0.34-0.055,0.532,0.406c0.196,0.472,0.666,1.627,0.724,1.746c0.059,0.119,0.099,0.259,0.02,0.417c-0.079,0.158-0.118,0.257-0.236,0.396c-0.118,0.139-0.248,0.31-0.354,0.416c-0.118,0.118-0.241,0.246-0.103,0.483c0.138,0.237,0.611,1.008,1.312,1.632c0.902,0.804,1.663,1.052,1.9,1.171c0.237,0.118,0.375,0.099,0.513-0.059c0.138-0.158,0.59-0.689,0.747-0.926s0.315-0.197,0.532-0.118c0.217,0.079,1.37,0.646,1.606,0.764c0.237,0.118,0.394,0.178,0.453,0.276C28.461,27.564,28.461,28.026,28.28,28.527z" />
+        </svg>
+    </a>
+</body>
+</html>

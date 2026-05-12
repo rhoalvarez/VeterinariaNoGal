@@ -1,0 +1,53 @@
+﻿@model VeterinariaNoGal.Models.Mascota
+@{
+    ViewData["Title"] = "Nueva Mascota";
+    var clientes = ViewBag.Clientes as List<VeterinariaNoGal.Models.Cliente>;
+    var especies = ViewBag.Especies as List<VeterinariaNoGal.Models.Especie>;
+}
+
+<div class="container mt-4">
+    <h2>Nueva Mascota</h2>
+    <form method="post" action="/Mascota/Crear">
+        <div class="mb-3">
+            <label>Nombre</label>
+            <input type="text" name="Nombre" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>Dueño (Cliente)</label>
+            <select name="Id_Cliente" class="form-control">
+                @if (clientes != null)
+                {
+                    @foreach (var c in clientes)
+                    {
+                        <option value="@c.Id_Cliente">@c.Nombre @c.Apellido</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Especie</label>
+            <select name="Id_Especie" class="form-control">
+                @if (especies != null)
+                {
+                    @foreach (var e in especies)
+                    {
+                        <option value="@e.IdEspecies">@e.Descripcion</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Sexo</label>
+            <select name="Sexo" class="form-control">
+                <option value="M">Macho</option>
+                <option value="H">Hembra</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Fecha de Nacimiento</label>
+            <input type="date" name="FechaNacimiento" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="/Mascota/Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

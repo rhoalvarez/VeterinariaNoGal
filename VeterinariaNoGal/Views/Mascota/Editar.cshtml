@@ -1,0 +1,38 @@
+﻿@model VeterinariaNoGal.Models.Mascota
+
+@{
+    ViewData["Title"] = "Editar Mascota";
+}
+
+<div class="container mt-4">
+    <h2>Editar Mascota</h2>
+
+    <form method="post" action="/Mascota/Editar">
+        <input type="hidden" name="Id_Mascota" value="@Model.Id_Mascota" />
+        <div class="mb-3">
+            <label>Nombre</label>
+            <input type="text" name="Nombre" value="@Model.Nombre" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>ID Cliente (dueño)</label>
+            <input type="number" name="Id_Cliente" value="@Model.Id_Cliente" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>ID Especie</label>
+            <input type="number" name="Id_Especie" value="@Model.Id_Especie" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>Sexo</label>
+            <select name="Sexo" class="form-control">
+                <option value="M" selected="@(Model.Sexo == "M")">Macho</option>
+                <option value="H" selected="@(Model.Sexo == "H")">Hembra</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Fecha de Nacimiento</label>
+            <input type="date" name="FechaNacimiento" value="@Model.FechaNacimiento.ToString("yyyy-MM-dd")" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-success">Guardar cambios</button>
+        <a href="/Mascota/Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

@@ -1,0 +1,212 @@
+﻿@{
+    ViewData["Title"] = "Nuevo Cobro";
+    var clientes = ViewBag.Clientes as List<VeterinariaNoGal.Models.Cliente>;
+}
+
+<div class="container mt-4">
+    <h2>💰 Nuevo Cobro</h2>
+
+    <form method="post" action="/Cobros/Crear">
+        <div style="background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); border-left: 5px solid #2d5a27;">
+            <h5 style="color: #2d5a27; margin-bottom: 15px;">👤 Cliente</h5>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label>Seleccionar Cliente</label>
+                    <select name="idCliente" class="form-control" required>
+                        <option value="">-- Seleccioná un cliente --</option>
+                        @foreach (var c in clientes)
+                        {
+                            <option value="@c.Id_Cliente">@c.Nombre — @c.Telefono</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div style="background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); border-left: 5px solid #8b6914;">
+            <h5 style="color: #8b6914; margin-bottom: 15px;">📋 Detalle del Cobro</h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label>Concepto</label>
+                    <input type="text" name="concepto" class="form-control" required
+                           placeholder="Ej: Castración, Vacuna, Consulta..." />
+                </div>
+                <div class="col-md-4">
+                    <label>Descripción (opcional)</label>
+                    <input type="text" name="descripcion" class="form-control"
+                           placeholder="Ej: Perro labrador 3 años" />
+                </div>
+                <div class="col-md-4">
+                    <label>Observación</label>
+                    <input type="text" name="observacion" class="form-control"
+                           placeholder="Observaciones adicionales" />
+                </div>
+                <div class="col-md-3">
+                    <label>Monto Total</label>
+                    <input type="number" name="monto" id="monto" class="form-control"
+                           step="0.01" required placeholder="0.00" />
+                </div>
+                <div class="col-md-3">
+                    <label>Tipo de Precio</label>
+                    <select name="tipoPrecio" class="form-control">
+                        <option value="minorista">Minorista</option>
+                        <option value="mayorista">Mayorista</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Forma de Pago</label>
+                    <select name="formaPago" id="formaPago" class="form-control">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Tarjeta">Tarjeta</option>
+                        <option value="Transferencia">Transferencia</option>
+                        <option value="Cuotas">Cuotas</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="button" class="btn btn-outline-dark w-100"
+                            onclick="mostrarCuotas()">
+                        Ver opciones de cuotas
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="panelCuotas" style="display:none; background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); border-left: 5px solid #c0392b;">
+            <h5 style="color: #c0392b; margin-bottom: 15px;">📅 Configurar Cuotas</h5>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label>Cantidad de cuotas</label>
+                    <input type="number" id="cantCuotas" class="form-control"
+                           min="1" max="24" value="1" />
+                </div>
+                <div class="col-md-4">
+                    <label>Fecha primera cuota</label>
+                    <input type="date" id="fechaPrimera" class="form-control" />
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="button" class="btn btn-success w-100"
+                            id="btnGenerar">
+                        ↻ Generar cuotas
+                    </button>
+                </div>
+            </div>
+
+            <table class="table table-bordered">
+                <thead style="background: #e8f0e0;">
+                    <tr>
+                        <th>Cuota N°</th>
+                        <th>Fecha Vencimiento</th>
+                        <th>Monto</th>
+                        <th>Interés %</th>
+                        <th>Total con Interés</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="cuotasBody"></tbody>
+            </table>
+
+            <button type="button" class="btn btn-outline-primary btn-sm"
+                    id="btnAgregar">
+                + Agregar cuota manual
+            </button>
+
+            <div style="background: #e8f0e0; border-radius: 10px; padding: 15px; margin-top: 15px;">
+                <strong>Total cuotas: $<span id="totalCuotas">0.00</span></strong>
+                <span style="color: #888; font-size: 13px; margin-left: 15px;">
+                    Monto original: $<span id="montoOriginal">0.00</span>
+                </span>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Guardar Cobro</button>
+        <a href="/Cobros/Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+<script>
+    // Espera que la página cargue completamente
+    document.addEventListener('DOMContentLoaded', function() {
+
+        document.getElementById('btnGenerar').addEventListener('click', function() {
+            generarCuotas();
+        });
+
+        document.getElementById('btnAgregar').addEventListener('click', function() {
+            var cant = document.getElementById('cuotasBody').rows.length + 1;
+            agregarFilaCuota(cant, '', 0, 0);
+        });
+    });
+
+    function mostrarCuotas() {
+        var forma = document.getElementById('formaPago').value;
+        if (forma === 'Cuotas') {
+            document.getElementById('panelCuotas').style.display = 'block';
+        } else {
+            document.getElementById('panelCuotas').style.display = 'none';
+        }
+    }
+
+    function generarCuotas() {
+        var cant = parseInt(document.getElementById('cantCuotas').value) || 1;
+        var fechaPrimera = document.getElementById('fechaPrimera').value;
+        var monto = parseFloat(document.getElementById('monto').value) || 0;
+
+        if (!fechaPrimera) {
+            alert('Por favor ingresá la fecha de la primera cuota');
+            return;
+        }
+        if (monto <= 0) {
+            alert('Por favor ingresá el monto total primero');
+            return;
+        }
+
+        var montoCuota = (monto / cant).toFixed(2);
+        document.getElementById('cuotasBody').innerHTML = '';
+
+        for (var i = 0; i < cant; i++) {
+            var partes = fechaPrimera.split('-');
+            var d = new Date(parseInt(partes[0]), parseInt(partes[1]) - 1 + i, parseInt(partes[2]));
+            var anio = d.getFullYear();
+            var mes = String(d.getMonth() + 1).padStart(2, '0');
+            var dia = String(d.getDate()).padStart(2, '0');
+            var fecha = anio + '-' + mes + '-' + dia;
+            agregarFilaCuota(i + 1, fecha, montoCuota, 0);
+        }
+        actualizarTotales();
+    }
+
+    function agregarFilaCuota(num, fecha, monto, interes) {
+        var tbody = document.getElementById('cuotasBody');
+        var total = (parseFloat(monto) + parseFloat(monto) * parseFloat(interes) / 100).toFixed(2);
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+            '<td><strong>' + num + '</strong></td>' +
+            '<td><input type="date" name="fechasVenc" class="form-control form-control-sm fecha-venc" value="' + fecha + '" onchange="actualizarTotales()" required /></td>' +
+            '<td><input type="number" name="montosCuota" class="form-control form-control-sm monto-cuota" value="' + monto + '" step="0.01" onchange="actualizarTotales()" required /></td>' +
+            '<td><input type="number" name="intereses" class="form-control form-control-sm interes-cuota" value="' + interes + '" step="0.01" min="0" onchange="actualizarTotales()" /></td>' +
+            '<td><strong class="total-cuota">$' + total + '</strong></td>' +
+            '<td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarCuota(this)">✕</button></td>';
+        tbody.appendChild(tr);
+        actualizarTotales();
+    }
+
+    function eliminarCuota(btn) {
+        btn.closest('tr').remove();
+        actualizarTotales();
+    }
+
+    function actualizarTotales() {
+        var filas = document.getElementById('cuotasBody').rows;
+        var total = 0;
+        for (var i = 0; i < filas.length; i++) {
+            var monto = parseFloat(filas[i].querySelector('.monto-cuota').value) || 0;
+            var interes = parseFloat(filas[i].querySelector('.interes-cuota').value) || 0;
+            var conInteres = monto + (monto * interes / 100);
+            filas[i].querySelector('.total-cuota').textContent = '$' + conInteres.toFixed(2);
+            total += conInteres;
+        }
+        document.getElementById('totalCuotas').textContent = total.toFixed(2);
+        document.getElementById('montoOriginal').textContent =
+            (parseFloat(document.getElementById('monto').value) || 0).toFixed(2);
+    }
+</script>

@@ -1,0 +1,46 @@
+﻿@model List<VeterinariaNoGal.Models.Producto>
+@{
+    ViewData["Title"] = "Productos";
+}
+
+<div class="container mt-4">
+    <h2>Productos</h2>
+    <a href="/Producto/Crear" class="btn btn-primary mb-3">+ Nuevo Producto</a>
+
+    <div class="row g-4">
+        @foreach (var p in Model)
+        {
+            <div class="col-md-3">
+                <div style="background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+
+                    <div style="background: #f0f4f0; padding: 20px; text-align: center; font-size: 60px;">
+                        🐾
+                    </div>
+
+                    <div style="padding: 15px;">
+                        <h6 style="color: #2d5a27; font-weight: bold; margin-bottom: 5px;">@p.Nombre</h6>
+                        <p style="color: #888; font-size: 12px; margin-bottom: 5px;">Código: @p.Codigo</p>
+                        <p style="color: #666; font-size: 13px; margin-bottom: 10px;">@p.Descripcion</p>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="font-size: 1.2rem; font-weight: bold; color: #2d5a27;">$@p.PMinorista.ToString("N2")</span>
+                            @if (p.Stock <= 5)
+                            {
+                                <span class="badge bg-warning text-dark">⚠️ Stock: @p.Stock</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Stock: @p.Stock</span>
+                            }
+                        </div>
+
+                        <p style="color: #999; font-size: 11px;">Mayorista: $@p.PMayorista.ToString("N2")</p>
+                        <p style="color: #999; font-size: 11px;">Proveedor: @p.Proveedor</p>
+
+                        <a href="/Producto/Eliminar/@p.IdProductos" class="btn btn-danger btn-sm w-100 mt-2" onclick="return confirm('¿Seguro que querés eliminar este producto?')">Eliminar</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

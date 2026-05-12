@@ -1,0 +1,130 @@
+﻿@model List<VeterinariaNoGal.Models.CuentaCorriente>
+@{
+    ViewData["Title"] = "Cuentas Corrientes";
+    var ventas = Model.Where(c => c.Tipo == "Venta").ToList();
+    var cobros = Model.Where(c => c.Tipo == "Cobro").ToList();
+    var pendientes = Model.Where(c => c.EstadoPago == "Pendiente").ToList();
+    var pagados = Model.Where(c => c.EstadoPago == "Pagado").ToList();
+}
+
+<style>
+    .cc-card {
+        border-radius: 12px;
+        padding: 16px 20px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        margin-bottom: 20px;
+    }
+
+    .cc-num {
+        font-size: 2rem;
+        font-weight: 800;
+    }
+
+    .cc-text {
+        font-size: 0.82rem;
+        color: #666;
+        margin-top: 2px;
+    }
+
+    .tabla-cc thead {
+        background: #2d5a27;
+        color: white;
+    }
+
+    .tabla-cc td, .tabla-cc th {
+        padding: 8px 12px;
+        vertical-align: middle;
+        font-size: 0.88rem;
+    }
+
+    .nav-tabs .nav-link.active {
+        background: #2d5a27;
+        color: white;
+        border-color: #2d5a27;
+    }
+
+    .nav-tabs .nav-link {
+        color: #2d5a27;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="font-weight:800; border-left:5px solid #2d5a27; padding-left:12px;">
+            💳 Cuentas Corrientes
+        </h2>
+        <div style="display:flex; gap:10px;">
+            <a href="/Cobros/Alertas" class="btn btn-danger">🔔 Alertas Cobros</a>
+            <a href="/Cobros/Crear" class="btn btn-success">+ Nuevo Cobro</a>
+            <a href="/Venta/Crear" class="btn btn-primary">+ Nueva Venta</a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-6 col-md-3">
+            <div class="cc-card" style="background:#fdecea; border:1px solid #f5c6cb;">
+                <div class="cc-num text-danger">@pendientes.Count</div>
+                <div class="cc-text">Pendientes</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="cc-card" style="background:#e8f5e9; border:1px solid #a5d6a7;">
+                <div class="cc-num text-success">@pagados.Count</div>
+                <div class="cc-text">Pagados</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="cc-card" style="background:#e3f2fd; border:1px solid #90caf9;">
+                <div class="cc-num text-info">@ventas.Count</div>
+                <div class="cc-text">Ventas en cuotas</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="cc-card" style="background:#fff8e1; border:1px solid #ffe082;">
+                <div class="cc-num" style="color:#f39c12;">@cobros.Count</div>
+                <div class="cc-text">Cobros en cuotas</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="background:white; border-radius:15px; padding:20px; box-shadow:0 2px 15px rgba(0,0,0,0.1);">
+
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#todos">Todos (@Model.Count)</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tabVentas">Ventas (@ventas.Count)</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tabCobros">Cobros (@cobros.Count)</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tabPendientes">Pendientes (@pendientes.Count)</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+
+            <div class="tab-pane fade show active" id="todos">
+                @await Html.PartialAsync("_TablaCuentas", Model)
+            </div>
+
+            <div class="tab-pane fade" id="tabVentas">
+                @await Html.PartialAsync("_TablaCuentas", ventas)
+            </div>
+
+            <div class="tab-pane fade" id="tabCobros">
+                @await Html.PartialAsync("_TablaCuentas", cobros)
+            </div>
+
+            <div class="tab-pane fade" id="tabPendientes">
+                @await Html.PartialAsync("_TablaCuentas", pendientes)
+            </div>
+
+        </div>
+    </div>
+</div>

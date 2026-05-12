@@ -1,0 +1,286 @@
+﻿@{
+    ViewData["Title"] = "Nueva Venta";
+    var clientes = ViewBag.Clientes as List<VeterinariaNoGal.Models.Cliente>;
+    var productos = ViewBag.Productos as List<VeterinariaNoGal.Models.Producto>;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="font-weight:800; border-left:5px solid #2d5a27; padding-left:12px;">🛒 Nueva Venta</h2>
+        <a href="/Venta/Index" class="btn btn-secondary">← Volver</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div style="background:white; border-radius:15px; padding:20px; box-shadow:0 2px 15px rgba(0,0,0,0.1); margin-bottom:20px;">
+                <h5 style="color:#2d5a27; border-bottom:2px solid #4a7c3f; padding-bottom:10px;">Datos de la Venta</h5>
+
+                <div class="mb-3">
+                    <label>Cliente</label>
+                    <select id="idCliente" class="form-control">
+                        @foreach (var c in clientes)
+                        {
+                            <option value="@c.Id_Cliente">@c.Nombre</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label>Forma de Pago</label>
+                    <select id="formaPago" class="form-control" onchange="mostrarCuotas()">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Tarjeta">Tarjeta</option>
+                        <option value="Transferencia">Transferencia</option>
+                        <option value="Cuotas">Cuotas</option>
+                    </select>
+                </div>
+
+                <div id="divCuotas" style="display:none; background:#f8f9fa; border-radius:10px; padding:15px; margin-bottom:15px;">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Cantidad de Cuotas</label>
+                            <select id="cantCuotas" class="form-control" onchange="calcularCuotas()">
+                                <option value="2">2 cuotas</option>
+                                <option value="3">3 cuotas</option>
+                                <option value="6">6 cuotas</option>
+                                <option value="12">12 cuotas</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Interés por cuota (%)</label>
+                            <input type="number" id="interesCuota" class="form-control"
+                                   value="0" min="0" max="100" step="0.5"
+                                   oninput="calcularCuotas()" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Fecha primera cuota</label>
+                            <input type="date" id="fechaPrimeraCuota" class="form-control"
+                                   oninput="calcularCuotas()" />
+                        </div>
+                    </div>
+
+                    <div id="previewCuotas" style="display:none;">
+                        <h6 style="color:#2d5a27; margin-bottom:8px;">📋 Detalle de cuotas:</h6>
+                        <table class="table table-sm table-bordered mb-0" id="tablaCuotasPreview">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Cuota</th>
+                                    <th>Vencimiento</th>
+                                    <th>Monto</th>
+                                    <th>Interés</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cuotasPreviewBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label>Observación</label>
+                    <textarea id="observacion" class="form-control" rows="2"></textarea>
+                </div>
+
+                <h5 style="color:#2d5a27; border-bottom:2px solid #4a7c3f; padding-bottom:10px; margin-top:20px;">Agregar Productos</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Producto</label>
+                        <select id="productoSelect" class="form-control">
+                            @foreach (var p in productos)
+                            {
+                                <option value="@p.IdProductos"
+                                        data-precio="@p.PMinorista"
+                                        data-nombre="@p.Nombre"
+                                        data-stock="@p.Stock">
+                                    @p.Nombre — $@p.PMinorista.ToString("N2") (Stock: @p.Stock)
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Cantidad</label>
+                        <input type="number" id="cantidad" class="form-control" value="1" min="1" />
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button onclick="agregarAlCarrito()" class="btn btn-primary w-100">Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div style="background:white; border-radius:15px; padding:20px; box-shadow:0 2px 15px rgba(0,0,0,0.1);">
+                <h5 style="color:#2d5a27; border-bottom:2px solid #4a7c3f; padding-bottom:10px;">🛒 Carrito</h5>
+                <table class="table table-sm" id="tablaCarrito">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cant.</th>
+                            <th>Precio</th>
+                            <th>Subtotal</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="carritoBody"></tbody>
+                </table>
+
+                <div style="border-top:2px solid #4a7c3f; padding-top:10px; margin-top:10px;">
+                    <h5 style="color:#2d5a27;">Subtotal: $<span id="totalVenta">0.00</span></h5>
+                    <div id="resumenCuotas" style="display:none; color:#2980b9; font-size:0.9rem;">
+                        <span id="textoCuotas"></span>
+                    </div>
+                </div>
+
+                <button onclick="finalizarVenta()" class="btn btn-success w-100 mt-3" style="font-size:1.1rem;">
+                    ✅ Finalizar Venta
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let carrito = [];
+
+    // Setear fecha mínima = hoy
+    document.addEventListener('DOMContentLoaded', () => {
+        const hoy = new Date().toISOString().split('T')[0];
+        document.getElementById('fechaPrimeraCuota').value = hoy;
+        document.getElementById('fechaPrimeraCuota').min = hoy;
+    });
+
+    function mostrarCuotas() {
+        const forma = document.getElementById('formaPago').value;
+        document.getElementById('divCuotas').style.display = forma === 'Cuotas' ? 'block' : 'none';
+        document.getElementById('resumenCuotas').style.display = forma === 'Cuotas' ? 'block' : 'none';
+        if (forma === 'Cuotas') calcularCuotas();
+    }
+
+    function calcularCuotas() {
+        const cant = parseInt(document.getElementById('cantCuotas').value);
+        const interes = parseFloat(document.getElementById('interesCuota').value) || 0;
+        const fechaStr = document.getElementById('fechaPrimeraCuota').value;
+        const total = carrito.reduce((s, i) => s + i.subtotal, 0);
+
+        if (total === 0 || !fechaStr) {
+            document.getElementById('previewCuotas').style.display = 'none';
+            return;
+        }
+
+        const montoCuota = total / cant;
+        const montoConInteres = montoCuota * (1 + interes / 100);
+        const tbody = document.getElementById('cuotasPreviewBody');
+        tbody.innerHTML = '';
+
+        for (let i = 0; i < cant; i++) {
+            const fecha = new Date(fechaStr + 'T00:00:00');
+            fecha.setMonth(fecha.getMonth() + i);
+            const fechaFmt = fecha.toLocaleDateString('es-AR');
+            tbody.innerHTML += `
+                <tr>
+                    <td style="text-align:center">${i + 1}</td>
+                    <td>${fechaFmt}</td>
+                    <td>$${montoCuota.toFixed(2)}</td>
+                    <td>${interes}%</td>
+                    <td><b>$${montoConInteres.toFixed(2)}</b></td>
+                </tr>`;
+        }
+
+        document.getElementById('previewCuotas').style.display = 'block';
+        document.getElementById('textoCuotas').textContent =
+            `${cant} cuotas de $${montoConInteres.toFixed(2)} c/u (interés ${interes}%)`;
+    }
+
+    function agregarAlCarrito() {
+        const select = document.getElementById('productoSelect');
+        const option = select.options[select.selectedIndex];
+        const cantidad = parseInt(document.getElementById('cantidad').value);
+        const stock = parseInt(option.getAttribute('data-stock'));
+
+        if (cantidad > stock) {
+            alert('No hay suficiente stock! Stock disponible: ' + stock);
+            return;
+        }
+
+        const idProducto = parseInt(select.value);
+        const nombre = option.getAttribute('data-nombre');
+        const precio = parseFloat(option.getAttribute('data-precio'));
+        const subtotal = precio * cantidad;
+
+        const existente = carrito.find(i => i.idProducto === idProducto);
+        if (existente) {
+            existente.cantidad += cantidad;
+            existente.subtotal = existente.precio * existente.cantidad;
+        } else {
+            carrito.push({ idProducto, nombre, cantidad, precio, subtotal });
+        }
+        actualizarCarrito();
+        if (document.getElementById('formaPago').value === 'Cuotas') calcularCuotas();
+    }
+
+    function eliminarDelCarrito(index) {
+        carrito.splice(index, 1);
+        actualizarCarrito();
+        if (document.getElementById('formaPago').value === 'Cuotas') calcularCuotas();
+    }
+
+    function actualizarCarrito() {
+        const tbody = document.getElementById('carritoBody');
+        tbody.innerHTML = '';
+        let total = 0;
+        carrito.forEach((item, index) => {
+            total += item.subtotal;
+            tbody.innerHTML += `
+                <tr>
+                    <td>${item.nombre}</td>
+                    <td>${item.cantidad}</td>
+                    <td>$${item.precio.toFixed(2)}</td>
+                    <td>$${item.subtotal.toFixed(2)}</td>
+                    <td><button onclick="eliminarDelCarrito(${index})" class="btn btn-danger btn-sm">X</button></td>
+                </tr>`;
+        });
+        document.getElementById('totalVenta').textContent = total.toFixed(2);
+    }
+
+    function finalizarVenta() {
+        if (carrito.length === 0) {
+            alert('El carrito está vacío!');
+            return;
+        }
+
+        const formaPago = document.getElementById('formaPago').value;
+        const cantCuotas = formaPago === 'Cuotas' ? parseInt(document.getElementById('cantCuotas').value) : 0;
+        const interes = formaPago === 'Cuotas' ? parseFloat(document.getElementById('interesCuota').value) || 0 : 0;
+        const fechaPrimeraCuota = formaPago === 'Cuotas' ? document.getElementById('fechaPrimeraCuota').value : null;
+
+        const data = {
+            idCliente: parseInt(document.getElementById('idCliente').value),
+            formaPago,
+            cantCuotas,
+            interes,
+            fechaPrimeraCuota,
+            observacion: document.getElementById('observacion').value,
+            items: carrito.map(i => ({
+                idProducto: i.idProducto,
+                cantidad: i.cantidad,
+                precio: i.precio,
+                subtotal: i.subtotal
+            }))
+        };
+
+        fetch('/Venta/GuardarVenta', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(result => {
+            if (result.success) {
+                alert('Venta guardada exitosamente!');
+                window.location.href = '/Venta/Index';
+            } else {
+                alert('Error: ' + result.error);
+            }
+        });
+    }
+</script>

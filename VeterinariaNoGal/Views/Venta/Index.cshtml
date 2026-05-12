@@ -1,0 +1,54 @@
+﻿@model List<VeterinariaNoGal.Models.Venta>
+@{
+    ViewData["Title"] = "Ventas";
+}
+
+<div class="container mt-4">
+    <h2>Ventas</h2>
+    <a href="/Venta/Crear" class="btn btn-primary mb-3">+ Nueva Venta</a>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>N° Venta</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Total</th>
+                <th>Forma de Pago</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var v in Model)
+            {
+                <tr>
+                    <td>#@v.IdVentas</td>
+                    <td>@v.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>@v.NombreCliente @v.ApellidoCliente</td>
+                    <td>$@v.Total.ToString("N2")</td>
+                    <td>@v.FormaPago</td>
+                    <td>
+                        @if (v.EstadoPago == "Pendiente")
+                        {
+                            <span class="badge bg-warning text-dark">Pendiente</span>
+                        }
+                        else if (v.EstadoPago == "Pagado")
+                        {
+                            <span class="badge bg-success">Pagado</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Cancelado</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="/Venta/Editar/@v.IdVentas" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="/Venta/Detalle/@v.IdVentas" class="btn btn-info btn-sm">Ver</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
