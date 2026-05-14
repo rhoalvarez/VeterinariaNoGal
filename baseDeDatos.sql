@@ -31,9 +31,9 @@ CREATE TABLE IF NOT EXISTS `clientes` (
   `FechaAlta` date NOT NULL,
   `Estado` tinyint(4) DEFAULT 0,
   PRIMARY KEY (`Id_Cliente`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla bd_veterinarianogal.clientes: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bd_veterinarianogal.clientes: ~1 rows (aproximadamente)
 
 -- Volcando estructura para tabla bd_veterinarianogal.cobrocuotas
 CREATE TABLE IF NOT EXISTS `cobrocuotas` (
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `cobrocuotas` (
   CONSTRAINT `cobrocuotas_ibfk_1` FOREIGN KEY (`IdCobro`) REFERENCES `cobros` (`IdCobro`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla bd_veterinarianogal.cobrocuotas: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bd_veterinarianogal.cobrocuotas: ~2 rows (aproximadamente)
 
 -- Volcando estructura para tabla bd_veterinarianogal.cobros
 CREATE TABLE IF NOT EXISTS `cobros` (
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `cuentascorrientes` (
   KEY `IdVenta` (`IdVenta`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla bd_veterinarianogal.cuentascorrientes: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bd_veterinarianogal.cuentascorrientes: ~3 rows (aproximadamente)
 
 -- Volcando estructura para tabla bd_veterinarianogal.cuotas
 CREATE TABLE IF NOT EXISTS `cuotas` (
@@ -112,11 +112,12 @@ CREATE TABLE IF NOT EXISTS `cuotas` (
   `interesHora` decimal(20,6) NOT NULL DEFAULT 0.000000,
   `estadoCuota` varchar(50) NOT NULL DEFAULT '',
   `estado` tinyint(4) DEFAULT NULL,
+  `formaPagoCuota` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`IdCuotas`),
   KEY `IdVenta` (`IdVenta`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla bd_veterinarianogal.cuotas: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bd_veterinarianogal.cuotas: ~6 rows (aproximadamente)
 
 -- Volcando estructura para tabla bd_veterinarianogal.especies
 CREATE TABLE IF NOT EXISTS `especies` (
@@ -155,7 +156,7 @@ CREATE TABLE IF NOT EXISTS `historial` (
   KEY `IdMascota` (`IdMascota`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla bd_veterinarianogal.historial: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bd_veterinarianogal.historial: ~4 rows (aproximadamente)
 
 -- Volcando estructura para tabla bd_veterinarianogal.mascota
 CREATE TABLE IF NOT EXISTS `mascota` (
@@ -169,9 +170,9 @@ CREATE TABLE IF NOT EXISTS `mascota` (
   PRIMARY KEY (`Id_Mascota`),
   KEY `Id_Cliente` (`Id_Cliente`),
   KEY `Id_Especie` (`Id_Especie`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla bd_veterinarianogal.mascota: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bd_veterinarianogal.mascota: ~1 rows (aproximadamente)
 
 -- Volcando estructura para tabla bd_veterinarianogal.productos
 CREATE TABLE IF NOT EXISTS `productos` (
@@ -185,12 +186,13 @@ CREATE TABLE IF NOT EXISTS `productos` (
   `IdTipo` int(11) DEFAULT NULL,
   `IdProveedor` int(11) DEFAULT NULL,
   `estado` tinyint(4) DEFAULT NULL,
+  `imagen` varchar(255) DEFAULT 'sin-imagen.png',
   PRIMARY KEY (`IdProductos`),
   KEY `IdTipo` (`IdTipo`),
   KEY `IdProveedor` (`IdProveedor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla bd_veterinarianogal.productos: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bd_veterinarianogal.productos: ~6 rows (aproximadamente)
 
 -- Volcando estructura para tabla bd_veterinarianogal.proveedores
 CREATE TABLE IF NOT EXISTS `proveedores` (
@@ -204,7 +206,7 @@ CREATE TABLE IF NOT EXISTS `proveedores` (
   PRIMARY KEY (`IdProveedores`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla bd_veterinarianogal.proveedores: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bd_veterinarianogal.proveedores: ~1 rows (aproximadamente)
 
 -- Volcando estructura para procedimiento bd_veterinarianogal.sp_ActualizarCliente
 DELIMITER //
@@ -286,12 +288,18 @@ CREATE PROCEDURE `sp_AgregarDetalleVenta`(
 	IN `p_cantidad` DECIMAL(20,6),
 	IN `p_precio` DECIMAL(20,6),
 	IN `p_descuento` DECIMAL(20,6),
-	IN `p_subtotal` DECIMAL(20,6)
+	IN `p_subtotal` DECIMAL(20,6),
+	IN `p_tipo_item` VARCHAR(50),
+	IN `p_descripcion_servicio` VARCHAR(200)
 )
 BEGIN
-    INSERT INTO ventadetalles (IdVentas, IdProductos, cantidad, precioUnitario, descuentoItem, subtotalItem)
-    VALUES (p_id_venta, p_id_producto, p_cantidad, p_precio, p_descuento, p_subtotal);
-    UPDATE productos SET stock = stock - p_cantidad WHERE IdProductos = p_id_producto;
+    INSERT INTO ventadetalles (IdVentas, IdProductos, cantidad, precioUnitario, descuentoItem, subtotalItem, tipoItem, descripcionServicio)
+    VALUES (p_id_venta, p_id_producto, p_cantidad, p_precio, p_descuento, p_subtotal, p_tipo_item, p_descripcion_servicio);
+    
+    -- Solo descuenta stock si es producto
+    IF p_tipo_item = 'producto' AND p_id_producto IS NOT NULL THEN
+        UPDATE productos SET stock = stock - p_cantidad WHERE IdProductos = p_id_producto;
+    END IF;
 END//
 DELIMITER ;
 
@@ -362,11 +370,18 @@ CREATE PROCEDURE `sp_CrearVenta`(
 	IN `p_id_cliente` INT,
 	IN `p_total` DECIMAL(20,6),
 	IN `p_forma_pago` VARCHAR(50),
-	IN `p_observacion` VARCHAR(250)
+	IN `p_observacion` VARCHAR(250),
+	IN `p_monto_pagado` DECIMAL(20,6),
+	IN `p_saldo_pendiente` DECIMAL(20,6),
+	IN `p_interes` DECIMAL(5,2),
+	IN `p_total_con_interes` DECIMAL(20,6),
+	IN `p_cant_cuotas` INT
 )
 BEGIN
-    INSERT INTO ventas (IdCliente, fecha, total, formaPago, estadoPago, observacion, estado)
-    VALUES (p_id_cliente, CURDATE(), p_total, p_forma_pago, 'Pendiente', p_observacion, 1);
+    INSERT INTO ventas (IdCliente, fecha, total, formaPago, estadoPago, observacion, estado, montoPagado, saldoPendiente, interes, totalConInteres, cantCuotas)
+    VALUES (p_id_cliente, CURDATE(), p_total, p_forma_pago, 
+            CASE WHEN p_monto_pagado >= p_total_con_interes THEN 'Pagado' ELSE 'Pendiente' END,
+            p_observacion, 1, p_monto_pagado, p_saldo_pendiente, p_interes, p_total_con_interes, p_cant_cuotas);
     SELECT LAST_INSERT_ID() AS IdVenta;
 END//
 DELIMITER ;
@@ -548,11 +563,12 @@ CREATE PROCEDURE `sp_InsertarProducto`(
 	IN `p_precio_min` DECIMAL(20,6),
 	IN `p_precio_may` DECIMAL(20,6),
 	IN `p_descripcion` VARCHAR(250),
-	IN `p_id_proveedor` INT
+	IN `p_id_proveedor` INT,
+	IN `p_imagen` VARCHAR(255)
 )
 BEGIN
-    INSERT INTO productos (codigo, nombre, stock, p_minorista, p_mayorista, descripcion, IdProveedor, estado)
-    VALUES (p_codigo, p_nombre, p_stock, p_precio_min, p_precio_may, p_descripcion, p_id_proveedor, 1);
+    INSERT INTO productos (codigo, nombre, stock, p_minorista, p_mayorista, descripcion, IdProveedor, estado, imagen)
+    VALUES (p_codigo, p_nombre, p_stock, p_precio_min, p_precio_may, p_descripcion, p_id_proveedor, 1, p_imagen);
 END//
 DELIMITER ;
 
@@ -594,6 +610,7 @@ BEGIN
            cc.saldoPendiente, cc.estadoCuota,
            co.IdCobro, co.concepto, co.descripcion, co.formaPago,
            c.Id_Cliente, c.Nombre AS nombre_cliente, c.Telefono,
+           'Cobro' AS tipoCuota,
            CASE
                WHEN cc.estadoCuota = 'Pagada' THEN 'PAGADA'
                WHEN cc.fechaVencimiento < CURDATE() THEN 'VENCIDA'
@@ -606,9 +623,7 @@ BEGIN
     JOIN cobros co ON cc.IdCobro = co.IdCobro
     JOIN clientes c ON co.IdCliente = c.Id_Cliente
     WHERE co.estado = 1
-
     UNION ALL
-
     SELECT 
         cu.IdCuotas AS IdCuota,
         cu.numeroCuota,
@@ -625,6 +640,7 @@ BEGIN
         c.Id_Cliente,
         c.Nombre AS nombre_cliente,
         c.Telefono,
+        'Venta' AS tipoCuota,
         CASE
             WHEN cu.estadoCuota = 'Pagada' THEN 'PAGADA'
             WHEN cu.fechaVencimiento < CURDATE() THEN 'VENCIDA'
@@ -637,7 +653,6 @@ BEGIN
     JOIN ventas v ON cu.IdVenta = v.IdVentas
     JOIN clientes c ON v.IdCliente = c.Id_Cliente
     WHERE cu.estado = 1
-
     ORDER BY fechaVencimiento ASC;
 END//
 DELIMITER ;
@@ -829,10 +844,14 @@ CREATE PROCEDURE `sp_ObtenerDetalleVenta`(
 )
 BEGIN
     SELECT vd.IdVentasDetalles, vd.cantidad, vd.precioUnitario, 
-           vd.descuentoItem, vd.subtotalItem,
-           p.nombre AS nombre_producto, p.codigo
+           vd.descuentoItem, vd.subtotalItem, vd.tipoItem, vd.descripcionServicio,
+           CASE 
+               WHEN vd.tipoItem = 'servicio' THEN vd.descripcionServicio
+               ELSE p.nombre 
+           END AS nombre_producto,
+           p.codigo
     FROM ventadetalles vd
-    JOIN productos p ON vd.IdProductos = p.IdProductos
+    LEFT JOIN productos p ON vd.IdProductos = p.IdProductos
     WHERE vd.IdVentas = p_id;
 END//
 DELIMITER ;
@@ -888,6 +907,7 @@ CREATE PROCEDURE `sp_ObtenerVenta`(
 )
 BEGIN
     SELECT v.IdVentas, v.IdCliente, v.total, v.formaPago, v.estadoPago, v.observacion,
+           v.totalConInteres, v.interes, v.montoPagado, v.saldoPendiente, v.cantCuotas,
            c.Nombre AS nombre_cliente, c.Apellido AS apellido_cliente
     FROM ventas v
     LEFT JOIN clientes c ON v.IdCliente = c.Id_Cliente
@@ -1022,11 +1042,9 @@ CREATE TABLE IF NOT EXISTS `turnos` (
   `estado` tinyint(4) DEFAULT 0,
   PRIMARY KEY (`IdTurno`),
   KEY `id_mascota` (`id_mascota`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla bd_veterinarianogal.turnos: ~0 rows (aproximadamente)
-INSERT INTO `turnos` (`IdTurno`, `fecha`, `estadoTurno`, `horaTurno`, `motivo`, `id_mascota`, `observacion`, `estado`) VALUES
-	(7, '2026-05-10', 'Pendiente', '22:00:00', 'revision', 1, 'tiene que hacer repsoso', 1);
+-- Volcando datos para la tabla bd_veterinarianogal.turnos: ~6 rows (aproximadamente)
 
 -- Volcando estructura para tabla bd_veterinarianogal.usuarios
 CREATE TABLE IF NOT EXISTS `usuarios` (
@@ -1037,27 +1055,30 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `rol` varchar(50) NOT NULL DEFAULT 'admin',
   `estado` tinyint(4) DEFAULT 1,
   PRIMARY KEY (`IdUsuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcando datos para la tabla bd_veterinarianogal.usuarios: ~1 rows (aproximadamente)
 INSERT INTO `usuarios` (`IdUsuario`, `nombre`, `email`, `password`, `rol`, `estado`) VALUES
-	(1, 'Administrador', 'admin@elnogal.com', 'admin123', 'admin', 1);
+	(1, 'Administrador', 'admin@elnogal.com', 'admin123', 'admin', 1),
+	(3, 'Usuario01', '', 'user123', 'usuario', 1);
 
 -- Volcando estructura para tabla bd_veterinarianogal.ventadetalles
 CREATE TABLE IF NOT EXISTS `ventadetalles` (
   `IdVentasDetalles` int(11) NOT NULL AUTO_INCREMENT,
   `IdVentas` int(11) NOT NULL,
-  `IdProductos` int(11) NOT NULL,
+  `IdProductos` int(11) DEFAULT NULL,
   `cantidad` decimal(20,6) NOT NULL,
   `precioUnitario` decimal(20,6) NOT NULL,
   `descuentoItem` decimal(20,6) NOT NULL,
   `subtotalItem` decimal(20,6) NOT NULL,
+  `tipoItem` varchar(20) DEFAULT 'producto',
+  `descripcionServicio` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`IdVentasDetalles`),
   KEY `IdVentas` (`IdVentas`),
   KEY `IdProductos` (`IdProductos`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla bd_veterinarianogal.ventadetalles: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bd_veterinarianogal.ventadetalles: ~9 rows (aproximadamente)
 
 -- Volcando estructura para tabla bd_veterinarianogal.ventas
 CREATE TABLE IF NOT EXISTS `ventas` (
@@ -1073,11 +1094,16 @@ CREATE TABLE IF NOT EXISTS `ventas` (
   `estadoPago` varchar(50) NOT NULL,
   `observacion` varchar(250) NOT NULL,
   `estado` tinyint(4) DEFAULT NULL,
+  `montoPagado` decimal(20,6) DEFAULT 0.000000,
+  `saldoPendiente` decimal(20,6) DEFAULT 0.000000,
+  `interes` decimal(5,2) DEFAULT 0.00,
+  `totalConInteres` decimal(20,6) DEFAULT 0.000000,
+  `cantCuotas` int(11) DEFAULT 1,
   PRIMARY KEY (`IdVentas`),
   KEY `IdCliente` (`IdCliente`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla bd_veterinarianogal.ventas: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla bd_veterinarianogal.ventas: ~8 rows (aproximadamente)
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
