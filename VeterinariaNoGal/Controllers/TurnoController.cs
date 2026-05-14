@@ -124,6 +124,21 @@ namespace VeterinariaNoGal.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public IActionResult CambiarEstado(int idTurno, string nuevoEstado, int idCliente)
+        {
+            using (MySqlConnection con = conexion.ObtenerConexion())
+            {
+                con.Open();
+                MySqlCommand cmd = new MySqlCommand(
+                    "UPDATE turnos SET estadoTurno = @estado WHERE IdTurno = @id", con);
+                cmd.Parameters.AddWithValue("@estado", nuevoEstado);
+                cmd.Parameters.AddWithValue("@id", idTurno);
+                cmd.ExecuteNonQuery();
+            }
+            return RedirectToAction("Ficha", "Cliente", new { id = idCliente });
+        }
+
         public IActionResult Eliminar(int id)
         {
             using (MySqlConnection con = conexion.ObtenerConexion())

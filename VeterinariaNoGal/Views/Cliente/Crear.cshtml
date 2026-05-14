@@ -18,7 +18,15 @@
                 </div>
                 <div class="col-md-6">
                     <label>Teléfono</label>
-                    <input type="text" name="Telefono" class="form-control" required placeholder="Ej: 3814123456" />
+                    <input type="tel"
+                           name="Telefono"
+                           class="form-control"
+                           required
+                           placeholder="Ej: 3814123456"
+                           pattern="[0-9]*"
+                           inputmode="numeric"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                    <small class="text-muted">Solo números, sin espacios ni guiones.</small>
                 </div>
             </div>
         </div>

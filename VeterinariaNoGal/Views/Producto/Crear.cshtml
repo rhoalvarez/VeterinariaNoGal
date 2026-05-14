@@ -2,11 +2,9 @@
 @{
     ViewData["Title"] = "Nuevo Producto";
 }
-
 <div class="container mt-4">
     <h2>Nuevo Producto</h2>
-
-    <form method="post" action="/Producto/Crear">
+    <form method="post" action="/Producto/Crear" enctype="multipart/form-data">
         <div class="mb-3">
             <label>Código</label>
             <input type="text" name="Codigo" class="form-control" required />
@@ -40,7 +38,29 @@
                 }
             </select>
         </div>
+        <div class="mb-3">
+            <label>Foto del Producto</label>
+            <input type="file" name="imagenFile" class="form-control" accept="image/*" />
+            <small class="text-muted">Opcional. JPG, PNG o WEBP. Si no subís foto se usará una imagen por defecto.</small>
+            <div id="preview" style="margin-top:10px; display:none;">
+                <img id="imgPreview" src="" style="max-height:150px; border-radius:10px; border:1px solid #ccc;" />
+            </div>
+        </div>
         <button type="submit" class="btn btn-success">Guardar</button>
         <a href="/Producto/Index" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
+
+<script>
+    document.querySelector('input[name="imagenFile"]').addEventListener('change', function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById('imgPreview').src = e.target.result;
+                document.getElementById('preview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>

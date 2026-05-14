@@ -2,32 +2,34 @@
 @{
     ViewData["Title"] = "Clientes";
 }
-
 <div class="container mt-4">
-    <h2>Clientes</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>| Clientes</h2>
+    </div>
 
-    <div class="row mb-3">
+  
+    <div class="row mb-2">
         <div class="col-12">
             <form method="get" action="/Cliente/Buscar">
-                <div class="input-group flex-nowrap">
-                    <input type="text" name="buscar" class="form-control"
-                           placeholder="🔍 Buscar por nombre o teléfono..."
-                           value="@ViewBag.Buscar" />
+                <input type="text" name="buscar" class="form-control mb-2"
+                       placeholder="🔍 Buscar por nombre o teléfono..."
+                       value="@ViewBag.Buscar" />
+                <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-success">Buscar</button>
                     <a href="/Cliente/Index" class="btn btn-secondary">Limpiar</a>
-                    <a href="/Cliente/Crear" class="btn btn-primary text-nowrap">+ Nuevo</a>
+                    <a href="/Cliente/Crear" class="btn btn-primary ms-auto">+ Nuevo</a>
                 </div>
             </form>
         </div>
     </div>
 
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered table-hover mt-3">
         <thead class="table-dark">
             <tr>
                 <th>Nombre</th>
                 <th>Mascotas</th>
                 <th>Teléfono</th>
-                <th>Opciones</th>
+                <th class="text-center">Opciones</th>
             </tr>
         </thead>
         <tbody>
@@ -36,7 +38,9 @@
                 <tr>
                     <td colspan="4" style="text-align: center; padding: 30px; color: #888;">
                         <div style="font-size: 40px;">🔍</div>
-                        <p style="font-size: 16px; margin-top: 10px;">No se encontró ningún cliente o mascota con <b>"@ViewBag.Buscar"</b></p>
+                        <p style="font-size: 16px; margin-top: 10px;">
+                            No se encontró ningún cliente con <b>"@ViewBag.Buscar"</b>
+                        </p>
                         <p style="font-size: 13px;">Verificá el nombre e intentá de nuevo</p>
                     </td>
                 </tr>
@@ -49,10 +53,17 @@
                         <td>@cliente.Nombre</td>
                         <td>@cliente.Apellido</td>
                         <td>@cliente.Telefono</td>
-                        <td>
-                            <a href="/Cliente/Ficha/@cliente.Id_Cliente" class="btn btn-success btn-sm">📋 Ver Ficha</a>
-                            <a href="/Cliente/Editar/@cliente.Id_Cliente" class="btn btn-warning btn-sm">Editar</a>
-                            <a href="/Cliente/Eliminar/@cliente.Id_Cliente" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este cliente?')">Eliminar</a>
+                        <td class="text-center">
+                            <a href="/Cliente/Ficha/@cliente.Id_Cliente"
+                               class="btn btn-success btn-sm"
+                               title="Ver Ficha">📋</a>
+                            <a href="/Cliente/Editar/@cliente.Id_Cliente"
+                               class="btn btn-warning btn-sm"
+                               title="Editar">✏️</a>
+                            <a href="/Cliente/Eliminar/@cliente.Id_Cliente"
+                               class="btn btn-danger btn-sm"
+                               title="Eliminar"
+                               onclick="return confirm('¿Eliminar este cliente?')">🗑️</a>
                         </td>
                     </tr>
                 }

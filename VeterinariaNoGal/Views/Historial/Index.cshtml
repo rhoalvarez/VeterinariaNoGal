@@ -2,39 +2,42 @@
 @{
     ViewData["Title"] = "Historial Clínico";
 }
-
 <div class="container mt-4">
     <h2>Historial Clínico</h2>
     <a href="/Historial/Crear" class="btn btn-primary mb-3">+ Nuevo Registro</a>
 
-    <table class="table table-bordered table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>Mascota</th>
-                <th>Fecha</th>
-                <th>Motivo</th>
-                <th>Diagnóstico</th>
-                <th>Tratamiento</th>
-                <th>Próximo Control</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var h in Model)
-            {
+    <div style="overflow-x: auto;">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
                 <tr>
-                    <td>@h.NombreMascota</td>
-                    <td>@h.FechaConsulta.ToString("dd/MM/yyyy")</td>
-                    <td>@h.MotivoConsulta</td>
-                    <td>@h.Diagnostico</td>
-                    <td>@h.Tratamiento</td>
-                    <td>@h.ProximoControl.ToString("dd/MM/yyyy")</td>
-                    <td>
-                        <a href="/Historial/Eliminar/@h.IdHistorial" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que querés eliminar este registro?')">Eliminar</a>
-                    </td>
+                    <th>Mascota</th>
+                    <th>Fecha</th>
+                    <th>Motivo</th>
+                    <th>Diagnóstico</th>
+                    <th>Tratamiento</th>
+                    <th>Próximo Control</th>
+                    <th class="text-center">Acciones</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var h in Model)
+                {
+                    <tr>
+                        <td>@h.NombreMascota</td>
+                        <td>@h.FechaConsulta.ToString("dd/MM/yyyy")</td>
+                        <td>@h.MotivoConsulta</td>
+                        <td>@h.Diagnostico</td>
+                        <td>@h.Tratamiento</td>
+                        <td>@h.ProximoControl.ToString("dd/MM/yyyy")</td>
+                        <td class="text-center">
+                            <a href="/Historial/Eliminar/@h.IdHistorial"
+                               class="btn btn-danger btn-sm"
+                               title="Eliminar"
+                               onclick="return confirm('¿Seguro que querés eliminar este registro?')">🗑️</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
-

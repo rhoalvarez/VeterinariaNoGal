@@ -137,7 +137,8 @@ namespace VeterinariaNoGal.Controllers
                         NombreCliente = reader["nombre_cliente"].ToString(),
                         Telefono = reader["Telefono"].ToString(),
                         IdCliente = Convert.ToInt32(reader["Id_Cliente"]),
-                        Alerta = reader["alerta"].ToString()
+                        Alerta = reader["alerta"].ToString(),
+                        TipoCuota = reader["tipoCuota"].ToString() // ← nuevo
                     });
                 }
             }
@@ -205,12 +206,13 @@ namespace VeterinariaNoGal.Controllers
 
         // POST /Cobros/PagarCuota
         [HttpPost]
-        public IActionResult PagarCuota(int idCuota, decimal montoPago)
+        public IActionResult PagarCuota(int idCuota, decimal montoPago, string tipoCuota)
         {
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
-                MySqlCommand cmd = new MySqlCommand("sp_PagarCuotaCobro", con);
+                string sp = tipoCuota == "Venta" ? "sp_PagarCuotaVenta" : "sp_PagarCuotaCobro";
+                MySqlCommand cmd = new MySqlCommand(sp, con);
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("p_id_cuota", idCuota);
                 cmd.Parameters.AddWithValue("p_monto_pago", montoPago);
@@ -218,7 +220,6 @@ namespace VeterinariaNoGal.Controllers
             }
             return RedirectToAction("Alertas");
         }
-
         public static int ContarAlertasPendientes(ConexionDB conexion)
         {
             int count = 0;

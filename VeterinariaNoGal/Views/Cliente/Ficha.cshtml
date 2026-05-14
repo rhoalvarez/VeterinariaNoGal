@@ -70,8 +70,7 @@
                     </h5>
                 </div>
                 <div class="col-md-2 text-end">
-                    <button type="button" onclick="toggleEditar(@mascota.Id_Mascota)"
-                            class="btn btn-warning btn-sm">
+                    <button type="button" onclick="toggleEditar(@mascota.Id_Mascota)" class="btn btn-warning btn-sm">
                         ✏️ Editar
                     </button>
                 </div>
@@ -111,11 +110,12 @@
                 </form>
             </div>
 
+            @* HISTORIAL *@
             @if (historiales.ContainsKey(mascota.Id_Mascota) && historiales[mascota.Id_Mascota].Count > 0)
             {
                 <div style="overflow-x:auto;">
-                    <table class="table table-sm table-bordered mb-3">
-                        <thead style="background: #e8f0e0;">
+                    <table class="table table-sm table-bordered mb-3" style="min-width:500px;">
+                        <thead style="background: #2d5a27; color:white;">
                             <tr>
                                 <th>Fecha</th>
                                 <th>Motivo</th>
@@ -132,7 +132,7 @@
                                     <td>@h.MotivoConsulta</td>
                                     <td>@h.Diagnostico</td>
                                     <td>@h.Tratamiento</td>
-                                    <td>@h.ProximoControl.ToString("dd/MM/yyyy")</td>
+                                    <td>@(h.ProximoControl.Year > 1 ? h.ProximoControl.ToString("dd/MM/yyyy") : "—")</td>
                                 </tr>
                             }
                         </tbody>
@@ -144,50 +144,56 @@
                 <p style="color: #888; font-size: 13px; margin-bottom: 10px;">Sin visitas registradas aún.</p>
             }
 
+            @* NUEVA VISITA *@
             <div style="background: #f9f9f9; border-radius: 10px; padding: 15px; border: 1px dashed #ccc; margin-bottom: 15px;">
                 <p style="color: #2d5a27; font-weight: bold; margin-bottom: 10px;">➕ Nueva Visita</p>
                 <form method="post" action="/Cliente/AgregarVisita">
                     <input type="hidden" name="IdMascota" value="@mascota.Id_Mascota" />
                     <input type="hidden" name="idCliente" value="@Model.Id_Cliente" />
                     <div class="row g-2">
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-2">
+                            <label class="form-label" style="font-size:12px; color:#555;">Fecha consulta</label>
                             <input type="date" name="FechaConsulta" class="form-control form-control-sm" required />
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-2">
+                            <label class="form-label" style="font-size:12px; color:#555;">Motivo</label>
                             <input type="text" name="MotivoConsulta" class="form-control form-control-sm" placeholder="Motivo" required />
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-2">
+                            <label class="form-label" style="font-size:12px; color:#555;">Diagnóstico</label>
                             <input type="text" name="Diagnostico" class="form-control form-control-sm" placeholder="Diagnóstico" required />
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-2">
+                            <label class="form-label" style="font-size:12px; color:#555;">Tratamiento</label>
                             <input type="text" name="Tratamiento" class="form-control form-control-sm" placeholder="Tratamiento" />
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-2">
+                            <label class="form-label" style="font-size:12px; color:#555;">Próximo control (opcional)</label>
                             <input type="date" name="ProximoControl" class="form-control form-control-sm" />
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-6 col-md-1 d-flex align-items-end">
                             <button type="submit" class="btn btn-success btn-sm w-100">✓</button>
                         </div>
                     </div>
                 </form>
             </div>
 
-            @* SECCIÓN TURNOS *@
+            @* TURNOS *@
             <div style="background: #f0f7ff; border-radius: 10px; padding: 15px; border: 1px dashed #3498db;">
                 <p style="color: #2980b9; font-weight: bold; margin-bottom: 10px;">📅 Turnos</p>
 
                 @if (turnos.ContainsKey(mascota.Id_Mascota) && turnos[mascota.Id_Mascota].Count > 0)
                 {
-                    <div style="overflow-x:auto;">
-                        <table class="table table-sm table-bordered mb-3">
-                            <thead style="background: #d0e8ff;">
+                    <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
+                        <table class="table table-sm table-bordered mb-3" style="min-width:550px;">
+                            <thead style="background: #2980b9; color:white;">
                                 <tr>
                                     <th>Fecha</th>
                                     <th>Hora</th>
                                     <th>Motivo</th>
                                     <th>Estado</th>
+                                    <th>Acción</th>
                                     <th>Observación</th>
-                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -198,32 +204,46 @@
                                         <td>@t.HoraTurno.ToString(@"hh\:mm")</td>
                                         <td>@t.Motivo</td>
                                         <td>
-                                            @if (t.EstadoTurno == "Confirmado")
+                                            @if (t.EstadoTurno == "Asistió")
                                             {
-                                                <span class="badge bg-success">Confirmado</span>
+                                                <span class="badge bg-success">✅ Asistió</span>
+                                            }
+                                            else if (t.EstadoTurno == "No asistió")
+                                            {
+                                                <span class="badge bg-danger">❌ No asistió</span>
                                             }
                                             else if (t.EstadoTurno == "Cancelado")
                                             {
-
-                                                <span class="badge bg-danger">Cancelado</span>
+                                                <span class="badge bg-secondary">Cancelado</span>
                                             }
                                             else
                                             {
-
-                                                <span class="badge bg-warning text-dark">Pendiente</span>
+                                                <span class="badge bg-warning text-dark">⏳ Pendiente</span>
+                                            }
+                                        </td>
+                                        <td style="white-space:nowrap;">
+                                            @if (t.EstadoTurno == "Pendiente")
+                                            {
+                                                <form method="post" action="/Turno/CambiarEstado" style="display:inline;">
+                                                    <input type="hidden" name="idTurno" value="@t.IdTurno" />
+                                                    <input type="hidden" name="idCliente" value="@Model.Id_Cliente" />
+                                                    <input type="hidden" name="nuevoEstado" value="Asistió" />
+                                                    <button type="submit" class="btn btn-success btn-sm" title="Asistió">✅</button>
+                                                </form>
+                                                <form method="post" action="/Turno/CambiarEstado" style="display:inline;">
+                                                    <input type="hidden" name="idTurno" value="@t.IdTurno" />
+                                                    <input type="hidden" name="idCliente" value="@Model.Id_Cliente" />
+                                                    <input type="hidden" name="nuevoEstado" value="No asistió" />
+                                                    <button type="submit" class="btn btn-danger btn-sm" title="No asistió">❌</button>
+                                                </form>
+                                                <form method="post" action="/Cliente/EliminarTurno" style="display:inline;">
+                                                    <input type="hidden" name="idTurno" value="@t.IdTurno" />
+                                                    <input type="hidden" name="idCliente" value="@Model.Id_Cliente" />
+                                                    <button type="submit" class="btn btn-secondary btn-sm" onclick="return confirm('¿Eliminar turno?')" title="Eliminar">🗑️</button>
+                                                </form>
                                             }
                                         </td>
                                         <td>@t.Observacion</td>
-                                        <td>
-                                            <form method="post" action="/Cliente/EliminarTurno">
-                                                <input type="hidden" name="idTurno" value="@t.IdTurno" />
-                                                <input type="hidden" name="idCliente" value="@Model.Id_Cliente" />
-                                                <button type="submit" class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('¿Eliminar turno?')">
-                                                    🗑️
-                                                </button>
-                                            </form>
-                                        </td>
                                     </tr>
                                 }
                             </tbody>
@@ -240,25 +260,24 @@
                     <input type="hidden" name="idMascota" value="@mascota.Id_Mascota" />
                     <input type="hidden" name="idCliente" value="@Model.Id_Cliente" />
                     <div class="row g-2">
-                        <div class="col-md-3">
+                        <div class="col-6 col-md-3">
                             <input type="date" name="fecha" class="form-control form-control-sm" required />
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-2">
                             <input type="time" name="horaTurno" class="form-control form-control-sm" required />
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-6 col-md-3">
                             <input type="text" name="motivo" class="form-control form-control-sm" placeholder="Motivo" required />
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-6 col-md-3">
                             <input type="text" name="observacion" class="form-control form-control-sm" placeholder="Observación" />
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-12 col-md-1">
                             <button type="submit" class="btn btn-primary btn-sm w-100">✓</button>
                         </div>
                     </div>
                 </form>
             </div>
-
         </div>
     }
 </div>

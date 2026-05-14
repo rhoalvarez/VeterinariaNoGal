@@ -28,7 +28,8 @@ namespace VeterinariaNoGal.Controllers
                         PMinorista = Convert.ToDecimal(reader["p_minorista"] == DBNull.Value ? 0 : reader["p_minorista"]),
                         PMayorista = Convert.ToDecimal(reader["p_mayorista"] == DBNull.Value ? 0 : reader["p_mayorista"]),
                         Descripcion = reader["descripcion"].ToString(),
-                        Proveedor = reader["proveedor"].ToString()
+                        Proveedor = reader["proveedor"].ToString(),
+                        Imagen = reader["imagen"].ToString() // ← línea agregada
                     });
                 }
             }
@@ -58,8 +59,26 @@ namespace VeterinariaNoGal.Controllers
         }
 
         [HttpPost]
-        public IActionResult Crear(Producto p)
+        public async Task<IActionResult> Crear(Producto p, IFormFile imagenFile)
         {
+            string nombreImagen = "sin-imagen.png";
+
+            if (imagenFile != null && imagenFile.Length > 0)
+            {
+                string carpeta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "productos");
+                if (!Directory.Exists(carpeta))
+                    Directory.CreateDirectory(carpeta);
+
+                string extension = Path.GetExtension(imagenFile.FileName);
+                nombreImagen = Guid.NewGuid().ToString() + extension;
+                string rutaCompleta = Path.Combine(carpeta, nombreImagen);
+
+                using (var stream = new FileStream(rutaCompleta, FileMode.Create))
+                {
+                    await imagenFile.CopyToAsync(stream);
+                }
+            }
+
             using (MySqlConnection con = conexion.ObtenerConexion())
             {
                 con.Open();
@@ -72,6 +91,7 @@ namespace VeterinariaNoGal.Controllers
                 cmd.Parameters.AddWithValue("p_precio_may", p.PMayorista);
                 cmd.Parameters.AddWithValue("p_descripcion", p.Descripcion);
                 cmd.Parameters.AddWithValue("p_id_proveedor", p.IdProveedor);
+                cmd.Parameters.AddWithValue("p_imagen", nombreImagen);
                 cmd.ExecuteNonQuery();
             }
             return RedirectToAction("Index");

@@ -98,21 +98,22 @@
 </style>
 
 <div class="container mt-4 no-print">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <h2 style="font-weight:800; border-left:5px solid #2d5a27; padding-left:12px;">🧾 Comprobante de Cobro</h2>
-        <div style="display:flex; gap:10px;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
             <button onclick="window.print()" class="btn btn-success">🖨️ Imprimir</button>
-            <a href="/Cobros/Index" class="btn btn-secondary">← Volver</a>
+            <a href="/Cobros/Index" class="btn btn-secondary">← Cobros</a>
+            <a href="/CuentasCorrientes/Index" class="btn btn-primary">💼 Servicios</a>
         </div>
     </div>
 </div>
 
-<div class="container">
-    <div id="comprobante" style="background:white; border-radius:15px; padding:35px; box-shadow:0 2px 15px rgba(0,0,0,0.1); max-width:960px; margin:0 auto;">
+<div class="container" style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
+    <div id="comprobante" style="background:white; border-radius:15px; padding:25px; box-shadow:0 2px 15px rgba(0,0,0,0.1); max-width:960px; margin:0 auto; min-width:320px;">
 
-        <div class="linea-verde" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="linea-verde" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <div style="display:flex; align-items:center; gap:15px;">
-                <img src="/images/logo.png" style="height:70px;" />
+                <img src="/images/logo.png" style="height:60px;" />
                 <div>
                     <h4 style="color:#2d5a27; margin:0; font-weight:800;">Agroveterinaria El Nogal</h4>
                     <p style="color:#666; margin:0; font-size:0.85rem;">Sistema de Gestión Veterinaria</p>
@@ -127,17 +128,17 @@
             </div>
         </div>
 
-        <div class="row mb-4" style="background:#f8f9fa; border-radius:10px; padding:15px; margin:0;">
-            <div class="col-md-4">
+        <div class="row mb-4" style="background:#f8f9fa; border-radius:10px; padding:15px; margin:0 0 15px 0;">
+            <div class="col-6 col-md-4 mb-2">
                 <p class="seccion-titulo">Cliente</p>
                 <p class="dato-valor">@Model.NombreCliente</p>
                 <p style="color:#888; font-size:0.85rem; margin:0;">📱 @Model.Telefono</p>
             </div>
-            <div class="col-md-4">
+            <div class="col-6 col-md-4 mb-2">
                 <p class="seccion-titulo">Forma de Pago</p>
                 <p class="dato-valor">@Model.FormaPago</p>
             </div>
-            <div class="col-md-4">
+            <div class="col-6 col-md-4 mb-2">
                 <p class="seccion-titulo">Estado</p>
                 @if (Model.EstadoPago == "Pagado")
                 {
@@ -145,40 +146,40 @@
                 }
                 else
                 {
-
                     <span class="estado-pendiente">⏳ Pendiente</span>
                 }
             </div>
         </div>
 
-        <table class="table tabla-boleta mb-0">
-            <thead>
-                <tr>
-                    <th>Concepto / Servicio</th>
-                    <th style="text-align:right">Monto</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <b>@Model.Concepto</b>
-                        @if (!string.IsNullOrEmpty(Model.Descripcion) && Model.Descripcion != "0")
-                        {
-                            <br />
-                        
-                            <small style="color:#888">@Model.Descripcion</small>
-                        }
-                    </td>
-                    <td style="text-align:right">$@Model.Monto.ToString("N2")</td>
-                </tr>
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td style="text-align:right;">TOTAL</td>
-                    <td style="text-align:right;">$@Model.Monto.ToString("N2")</td>
-                </tr>
-            </tfoot>
-        </table>
+        <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
+            <table class="table tabla-boleta mb-0" style="min-width:300px;">
+                <thead>
+                    <tr>
+                        <th>Concepto / Servicio</th>
+                        <th style="text-align:right">Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <b>@Model.Concepto</b>
+                            @if (!string.IsNullOrEmpty(Model.Descripcion) && Model.Descripcion != "0")
+                            {
+                                <br />
+                                <small style="color:#888">@Model.Descripcion</small>
+                            }
+                        </td>
+                        <td style="text-align:right">$@Model.Monto.ToString("N2")</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td style="text-align:right;">TOTAL</td>
+                        <td style="text-align:right;">$@Model.Monto.ToString("N2")</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
 
         @if (cuotas != null && cuotas.Any())
         {
@@ -186,81 +187,82 @@
                 <h6 style="color:#2d5a27; font-weight:700; border-bottom:2px solid #2d5a27; padding-bottom:6px;">
                     📋 Plan de Cuotas
                 </h6>
-                <table class="table tabla-boleta mb-0">
-                    <thead>
-                        <tr>
-                            <th style="text-align:center">N°</th>
-                            <th>Vencimiento</th>
-                            <th style="text-align:right">Monto</th>
-                            <th style="text-align:center">Interés</th>
-                            <th style="text-align:right">Total</th>
-                            <th style="text-align:right">Saldo</th>
-                            <th style="text-align:center">Estado</th>
-                            <th class="no-print" style="text-align:center">Pagar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var c in cuotas)
-                        {
+                <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
+                    <table class="table tabla-boleta mb-0" style="min-width:500px;">
+                        <thead>
                             <tr>
-                                <td style="text-align:center">@c.NumeroCuota</td>
-                                <td>@c.FechaVencimiento.ToString("dd/MM/yyyy")</td>
-                                <td style="text-align:right">$@c.MontoCuota.ToString("N2")</td>
-                                <td style="text-align:center">
-                                    @if (c.Interes > 0)
-                                    {
-                                        @c.Interes.ToString("N2") <text>%</text>
-                                    }
-                                    else
-                                    {
-
-                                        <text>—</text>
-                                    }
-                                </td>
-                                <td style="text-align:right">$@c.MontoConInteres.ToString("N2")</td>
-                                <td style="text-align:right">$@c.SaldoPendiente.ToString("N2")</td>
-                                <td style="text-align:center">
-                                    @if (c.EstadoCuota == "Pagada")
-                                    {
-                                        <span class="estado-pagado">✅ Pagada</span>
-                                    }
-                                    else if (c.FechaVencimiento < DateTime.Today)
-                                    {
-
-                                        <span class="estado-vencida">⚠️ Vencida</span>
-                                    }
-                                    else
-                                    {
-
-                                        <span class="estado-pendiente">⏳ Pendiente</span>
-                                    }
-                                </td>
-                                <td class="no-print" style="text-align:center">
-                                    @if (c.EstadoCuota != "Pagada")
-                                    {
-                                        <form method="post" action="/Cobros/PagarCuota" style="display:flex; gap:5px; justify-content:center;">
-                                            <input type="hidden" name="idCuota" value="@c.IdCuota" />
-                                            <input type="number" name="montoPago"
-                                                   class="form-control form-control-sm"
-                                                   style="width:85px"
-                                                   value="@c.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
-                                                   step="0.01" min="0.01"
-                                                   max="@c.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
-                                            <button type="submit" class="btn btn-success btn-sm"
-                                                    onclick="return confirm('¿Confirmar pago?')">
-                                                ✅
-                                            </button>
-                                        </form>
-                                    }
-                                    else
-                                    {
-                                        <span style="color:#27ae60; font-size:0.85rem;">✔ Pagada</span>
-                                    }
-                                </td>
+                                <th style="text-align:center">N°</th>
+                                <th>Vencimiento</th>
+                                <th style="text-align:right">Monto</th>
+                                <th style="text-align:center">Interés</th>
+                                <th style="text-align:right">Total</th>
+                                <th style="text-align:right">Saldo</th>
+                                <th style="text-align:center">Estado</th>
+                                <th class="no-print" style="text-align:center">Pagar</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in cuotas)
+                            {
+                                <tr>
+                                    <td style="text-align:center">@c.NumeroCuota</td>
+                                    <td>@c.FechaVencimiento.ToString("dd/MM/yyyy")</td>
+                                    <td style="text-align:right">$@c.MontoCuota.ToString("N2")</td>
+                                    <td style="text-align:center">
+                                        @if (c.Interes > 0)
+                                        {
+                                            @c.Interes.ToString("N2")
+                                
+                                            <text>%</text>
+                                        }
+                                        else
+                                        {
+                                            <text>—</text>
+                                        }
+                                    </td>
+                                    <td style="text-align:right">$@c.MontoConInteres.ToString("N2")</td>
+                                    <td style="text-align:right">$@c.SaldoPendiente.ToString("N2")</td>
+                                    <td style="text-align:center">
+                                        @if (c.EstadoCuota == "Pagada")
+                                        {
+                                            <span class="estado-pagado">✅ Pagada</span>
+                                        }
+                                        else if (c.FechaVencimiento < DateTime.Today)
+                                        {
+                                            <span class="estado-vencida">⚠️ Vencida</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="estado-pendiente">⏳ Pendiente</span>
+                                        }
+                                    </td>
+                                    <td class="no-print" style="text-align:center; white-space:nowrap;">
+                                        @if (c.EstadoCuota != "Pagada")
+                                        {
+                                            <form method="post" action="/Cobros/PagarCuota" style="display:flex; gap:5px; justify-content:center;">
+                                                <input type="hidden" name="idCuota" value="@c.IdCuota" />
+                                                <input type="number" name="montoPago"
+                                                       class="form-control form-control-sm"
+                                                       style="width:85px"
+                                                       value="@c.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
+                                                       step="0.01" min="0.01"
+                                                       max="@c.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
+                                                <button type="submit" class="btn btn-success btn-sm"
+                                                        onclick="return confirm('¿Confirmar pago?')">
+                                                    ✅
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span style="color:#27ae60; font-size:0.85rem;">✔ Pagada</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         }
 
@@ -271,7 +273,7 @@
             </div>
         }
 
-        <div style="margin-top:30px; border-top:2px dashed #ccc; padding-top:20px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="margin-top:30px; border-top:2px dashed #ccc; padding-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <div style="font-size:0.8rem; color:#888;">
                 <p style="margin:0;">Agroveterinaria El Nogal</p>
                 <p style="margin:0;">Gracias por su confianza</p>
@@ -281,6 +283,5 @@
                 <p style="margin:0;">Sistema de Gestión El Nogal</p>
             </div>
         </div>
-
     </div>
 </div>

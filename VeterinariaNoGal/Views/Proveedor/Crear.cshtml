@@ -13,11 +13,26 @@
         </div>
         <div class="mb-3">
             <label>DNI / CUIT</label>
-            <input type="text" name="Dni" class="form-control" />
+            <input type="tel"
+                   name="Dni"
+                   class="form-control"
+                   pattern="[0-9]*"
+                   inputmode="numeric"
+                   maxlength="11"
+                   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                   placeholder="Solo números, sin guiones" />
+            <small class="text-muted">Ej: 20123456789</small>
         </div>
         <div class="mb-3">
             <label>Teléfono</label>
-            <input type="text" name="Telefono" class="form-control" />
+            <input type="tel"
+                   name="Telefono"
+                   class="form-control"
+                   pattern="[0-9]*"
+                   inputmode="numeric"
+                   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                   placeholder="Solo números" />
+            <small class="text-muted">Ej: 3814123456</small>
         </div>
         <div class="mb-3">
             <label>Email</label>

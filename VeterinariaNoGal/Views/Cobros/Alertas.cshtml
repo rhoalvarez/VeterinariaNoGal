@@ -15,6 +15,10 @@
         font-size: 0.87rem;
     }
 
+    .tabla-alertas {
+        min-width: 750px;
+    }
+
     .badge-estado {
         font-size: 0.76rem;
         padding: 5px 10px;
@@ -47,6 +51,8 @@
         padding: 20px;
         box-shadow: 0 2px 15px rgba(0,0,0,0.08);
         margin-bottom: 24px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .seccion-titulo {
@@ -81,7 +87,6 @@
 </style>
 
 <div class="container mt-4">
-
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 style="font-weight:800; border-left:5px solid #2d5a27; padding-left:12px;">🔔 Alertas de Cobros</h2>
         <a href="/Home/Index" class="btn btn-secondary">← Volver</a>
@@ -149,17 +154,17 @@
                                 <td style="text-align:center">@cuota.NumeroCuota</td>
                                 <td>@cuota.FechaVencimiento.ToString("dd/MM/yyyy")</td>
                                 <td>$@cuota.MontoCuota.ToString("N2")</td>
-                                <td style="text-align:center">@cuota.Interes %</td>
+                                <td style="text-align:center">@cuota.Interes.ToString("N2")%</td>
                                 <td>$@cuota.MontoConInteres.ToString("N2")</td>
                                 <td><strong class="saldo-vencida">$@cuota.SaldoPendiente.ToString("N2")</strong></td>
                                 <td><span class="badge bg-danger badge-estado">VENCIDA</span></td>
                                 <td>
                                     <form method="post" action="/Cobros/PagarCuota" style="display:flex;gap:5px;">
                                         <input type="hidden" name="idCuota" value="@cuota.IdCuota" />
+                                        <input type="hidden" name="tipoCuota" value="@cuota.TipoCuota" />
                                         <input type="number" name="montoPago" class="form-control form-control-sm" style="width:90px"
                                                value="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
-                                               step="0.01" min="0.01"
-                                               max="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
+                                               step="0.01" min="0.01" max="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
                                         <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('¿Confirmar pago?')">✅ Pagar</button>
                                     </form>
                                 </td>
@@ -189,17 +194,17 @@
                                 <td style="text-align:center">@cuota.NumeroCuota</td>
                                 <td>@cuota.FechaVencimiento.ToString("dd/MM/yyyy")</td>
                                 <td>$@cuota.MontoCuota.ToString("N2")</td>
-                                <td style="text-align:center">@cuota.Interes %</td>
+                                <td style="text-align:center">@cuota.Interes.ToString("N2")%</td>
                                 <td>$@cuota.MontoConInteres.ToString("N2")</td>
                                 <td><strong class="saldo-hoy">$@cuota.SaldoPendiente.ToString("N2")</strong></td>
                                 <td><span class="badge bg-warning text-dark badge-estado">VENCE HOY</span></td>
                                 <td>
                                     <form method="post" action="/Cobros/PagarCuota" style="display:flex;gap:5px;">
                                         <input type="hidden" name="idCuota" value="@cuota.IdCuota" />
+                                        <input type="hidden" name="tipoCuota" value="@cuota.TipoCuota" />
                                         <input type="number" name="montoPago" class="form-control form-control-sm" style="width:90px"
                                                value="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
-                                               step="0.01" min="0.01"
-                                               max="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
+                                               step="0.01" min="0.01" max="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
                                         <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('¿Confirmar pago?')">✅ Pagar</button>
                                     </form>
                                 </td>
@@ -229,17 +234,17 @@
                                 <td style="text-align:center">@cuota.NumeroCuota</td>
                                 <td>@cuota.FechaVencimiento.ToString("dd/MM/yyyy")</td>
                                 <td>$@cuota.MontoCuota.ToString("N2")</td>
-                                <td style="text-align:center">@cuota.Interes %</td>
+                                <td style="text-align:center">@cuota.Interes.ToString("N2")%</td>
                                 <td>$@cuota.MontoConInteres.ToString("N2")</td>
                                 <td><strong class="saldo-proxima">$@cuota.SaldoPendiente.ToString("N2")</strong></td>
                                 <td><span class="badge bg-info badge-estado">PRÓXIMA</span></td>
                                 <td>
                                     <form method="post" action="/Cobros/PagarCuota" style="display:flex;gap:5px;">
                                         <input type="hidden" name="idCuota" value="@cuota.IdCuota" />
+                                        <input type="hidden" name="tipoCuota" value="@cuota.TipoCuota" />
                                         <input type="number" name="montoPago" class="form-control form-control-sm" style="width:90px"
                                                value="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
-                                               step="0.01" min="0.01"
-                                               max="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
+                                               step="0.01" min="0.01" max="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
                                         <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('¿Confirmar pago?')">✅ Pagar</button>
                                     </form>
                                 </td>
@@ -269,17 +274,17 @@
                                 <td style="text-align:center">@cuota.NumeroCuota</td>
                                 <td>@cuota.FechaVencimiento.ToString("dd/MM/yyyy")</td>
                                 <td>$@cuota.MontoCuota.ToString("N2")</td>
-                                <td style="text-align:center">@cuota.Interes %</td>
+                                <td style="text-align:center">@cuota.Interes.ToString("N2")%</td>
                                 <td>$@cuota.MontoConInteres.ToString("N2")</td>
                                 <td><strong class="saldo-aldia">$@cuota.SaldoPendiente.ToString("N2")</strong></td>
                                 <td><span class="badge bg-success badge-estado">AL DÍA</span></td>
                                 <td>
                                     <form method="post" action="/Cobros/PagarCuota" style="display:flex;gap:5px;">
                                         <input type="hidden" name="idCuota" value="@cuota.IdCuota" />
+                                        <input type="hidden" name="tipoCuota" value="@cuota.TipoCuota" />
                                         <input type="number" name="montoPago" class="form-control form-control-sm" style="width:90px"
                                                value="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
-                                               step="0.01" min="0.01"
-                                               max="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
+                                               step="0.01" min="0.01" max="@cuota.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
                                         <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('¿Confirmar pago?')">✅ Pagar</button>
                                     </form>
                                 </td>
@@ -309,7 +314,7 @@
                                 <td style="text-align:center">@cuota.NumeroCuota</td>
                                 <td>@cuota.FechaVencimiento.ToString("dd/MM/yyyy")</td>
                                 <td>$@cuota.MontoCuota.ToString("N2")</td>
-                                <td style="text-align:center">@cuota.Interes %</td>
+                                <td style="text-align:center">@cuota.Interes.ToString("N2")%</td>
                                 <td>$@cuota.MontoConInteres.ToString("N2")</td>
                                 <td><strong style="color:#8e24aa;">$@cuota.MontoConInteres.ToString("N2")</strong></td>
                                 <td><span class="badge badge-estado" style="background:#8e24aa;">PAGADA</span></td>

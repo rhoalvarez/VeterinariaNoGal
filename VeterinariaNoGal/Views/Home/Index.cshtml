@@ -1,56 +1,48 @@
 ﻿@{
     ViewData["Title"] = "Inicio";
 }
-
 <div style="background: linear-gradient(135deg, #1e4d18, #3a7a2e); color: white; padding: 60px 40px; text-align: center; margin: -20px -15px 30px -15px; border-radius: 0 0 20px 20px;">
     <img src="/images/logo.png" style="height: 150px; margin-bottom: 20px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));" />
     <h1 style="font-size: 2.5rem; font-weight: bold; margin: 10px 0;">Agroveterinaria El Nogal</h1>
     <p style="font-size: 1.1rem; opacity: 0.9;">Sistema de gestión veterinaria</p>
 </div>
-
 <div class="container">
     <div class="row g-4 justify-content-center">
-
-        <div class="col-md-3">
+        <div class="col-6 col-md-3">
             <a href="/Cliente/Index" style="text-decoration: none;">
-                <div style="background: white; border-radius: 15px; padding: 30px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 4px solid #4a7c3f; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-                    <div style="font-size: 50px;">🏥</div>
-                    <h4 style="color: #2d5a27; margin-top: 10px;">Pacientes</h4>
-                    <p style="color: #888; font-size: 14px;">Clientes, mascotas e historial</p>
+                <div style="background: white; border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 4px solid #4a7c3f; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="font-size: 40px;">🏥</div>
+                    <h4 style="color: #2d5a27; margin-top: 10px; font-size: 0.95rem;">Pacientes</h4>
+                    <p style="color: #888; font-size: 12px; margin: 0;">Clientes, mascotas e historial</p>
                 </div>
             </a>
         </div>
-
-        <div class="col-md-3">
+        <div class="col-6 col-md-3">
             <a href="/Producto/Index" style="text-decoration: none;">
-                <div style="background: white; border-radius: 15px; padding: 30px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 4px solid #8b6914; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-                    <div style="font-size: 50px;">🛍️</div>
-                    <h4 style="color: #8b6914; margin-top: 10px;">Productos</h4>
-                    <p style="color: #888; font-size: 14px;">Inventario y stock</p>
+                <div style="background: white; border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 4px solid #8b6914; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="font-size: 40px;">🛍️</div>
+                    <h4 style="color: #8b6914; margin-top: 10px; font-size: 0.95rem;">Productos</h4>
+                    <p style="color: #888; font-size: 12px; margin: 0;">Inventario y stock</p>
                 </div>
             </a>
         </div>
-
-       
-        <div class="col-md-3">
-            <a href="/CuentasCorrientes/Index" style="text-decoration: none;">
-                <div style="background: white; border-radius: 15px; padding: 30px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 4px solid #2980b9; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-                    <div style="font-size: 50px;">💳</div>
-                    <h4 style="color: #2980b9; margin-top: 10px;">Cuentas Corrientes</h4>
-                    <p style="color: #888; font-size: 14px;">Ventas, cobros y cuotas</p>
+        <div class="col-6 col-md-3">
+            <a href="/Venta/Index" style="text-decoration: none;">
+                <div style="background: white; border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 4px solid #2980b9; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="font-size: 40px;">🛒</div>
+                    <h4 style="color: #2980b9; margin-top: 10px; font-size: 0.95rem;">Ventas</h4>
+                    <p style="color: #888; font-size: 12px; margin: 0;">Productos y servicios</p>
                 </div>
             </a>
         </div>
-
-        <div class="col-md-3">
+        <div class="col-6 col-md-3">
             <a href="/Proveedor/Index" style="text-decoration: none;">
-                <div style="background: white; border-radius: 15px; padding: 30px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 4px solid #4a7c3f; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-                    <div style="font-size: 50px;">🏭</div>
-                    <h4 style="color: #2d5a27; margin-top: 10px;">Proveedores</h4>
-                    <p style="color: #888; font-size: 14px;">Gestionar proveedores</p>
+                <div style="background: white; border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 4px solid #4a7c3f; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="font-size: 40px;">🏭</div>
+                    <h4 style="color: #2d5a27; margin-top: 10px; font-size: 0.95rem;">Proveedores</h4>
+                    <p style="color: #888; font-size: 12px; margin: 0;">Gestionar proveedores</p>
                 </div>
             </a>
         </div>
-
     </div>
 </div>

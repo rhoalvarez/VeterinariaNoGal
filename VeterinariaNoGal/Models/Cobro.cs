@@ -37,6 +37,7 @@
         public string Telefono { get; set; }
         public int IdCliente { get; set; }
         public string Alerta { get; set; }
+        public string TipoCuota { get; set; }
     }
 
 }

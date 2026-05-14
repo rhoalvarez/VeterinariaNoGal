@@ -14,5 +14,8 @@
 
         // Para mostrar
         public string Proveedor { get; set; }
+
+        //agregar foto
+        public string Imagen { get; set; } 
     }
 }

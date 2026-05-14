@@ -3,6 +3,7 @@
     ViewData["Title"] = "Detalle de Venta";
     var detalles = ViewBag.Detalles as List<VeterinariaNoGal.Models.DetalleVenta>;
     var cuotas = ViewBag.Cuotas as List<VeterinariaNoGal.Models.Cuota>;
+    decimal totalConInteres = cuotas != null && cuotas.Any() ? cuotas.Sum(c => c.MontoCuota) : Model.Total;
 }
 
 <style>
@@ -95,21 +96,23 @@
 </style>
 
 <div class="container mt-4 no-print">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <h2 style="font-weight:800; border-left:5px solid #2d5a27; padding-left:12px;">🧾 Comprobante de Venta</h2>
-        <div style="display:flex; gap:10px;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
             <button onclick="window.print()" class="btn btn-success">🖨️ Imprimir</button>
-            <a href="/Venta/Index" class="btn btn-secondary">← Volver</a>
+            <a href="/Venta/Index" class="btn btn-secondary">← Ventas</a>
+            <a href="/CuentasCorrientes/Index" class="btn btn-primary">💼 Servicios</a>
         </div>
     </div>
 </div>
 
-<div class="container">
-    <div id="comprobante" style="background:white; border-radius:15px; padding:35px; box-shadow:0 2px 15px rgba(0,0,0,0.1); max-width:900px; margin:0 auto;">
+<div class="container" style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
+    <div id="comprobante" style="background:white; border-radius:15px; padding:25px; box-shadow:0 2px 15px rgba(0,0,0,0.1); max-width:900px; margin:0 auto; min-width:320px;">
 
-        <div class="linea-verde" style="display:flex; justify-content:space-between; align-items:center;">
+        
+        <div class="linea-verde" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <div style="display:flex; align-items:center; gap:15px;">
-                <img src="/images/logo.png" style="height:70px;" />
+                <img src="/images/logo.png" style="height:60px;" />
                 <div>
                     <h4 style="color:#2d5a27; margin:0; font-weight:800;">Agroveterinaria El Nogal</h4>
                     <p style="color:#666; margin:0; font-size:0.85rem;">Sistema de Gestión Veterinaria</p>
@@ -124,16 +127,17 @@
             </div>
         </div>
 
-        <div class="row mb-4" style="background:#f8f9fa; border-radius:10px; padding:15px; margin:0;">
-            <div class="col-md-6">
+        
+        <div class="row mb-4" style="background:#f8f9fa; border-radius:10px; padding:15px; margin:0 0 15px 0;">
+            <div class="col-6 col-md-6 mb-2">
                 <p class="seccion-titulo">Cliente</p>
                 <p class="dato-valor">@Model.NombreCliente</p>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-md-3 mb-2">
                 <p class="seccion-titulo">Forma de Pago</p>
                 <p class="dato-valor">@Model.FormaPago</p>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-md-3 mb-2">
                 <p class="seccion-titulo">Estado</p>
                 @if (Model.EstadoPago == "Pagado")
                 {
@@ -141,126 +145,138 @@
                 }
                 else if (Model.EstadoPago == "Pendiente")
                 {
-
                     <span class="estado-pendiente">⏳ Pendiente</span>
                 }
                 else
                 {
-
                     <span class="estado-cancelado">❌ Cancelado</span>
                 }
             </div>
         </div>
 
-        <table class="table tabla-boleta mb-0">
-            <thead>
-                <tr>
-                    <th>Producto / Servicio</th>
-                    <th style="text-align:center">Cant.</th>
-                    <th style="text-align:right">Precio Unit.</th>
-                    <th style="text-align:right">Descuento</th>
-                    <th style="text-align:right">Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var d in detalles)
-                {
+        
+        <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
+            <table class="table tabla-boleta mb-0" style="min-width:400px;">
+                <thead>
                     <tr>
-                        <td>@d.NombreProducto</td>
-                        <td style="text-align:center">@d.Cantidad.ToString("N0")</td>
-                        <td style="text-align:right">$@d.PrecioUnitario.ToString("N2")</td>
-                        <td style="text-align:right">$@d.DescuentoItem.ToString("N2")</td>
-                        <td style="text-align:right">$@d.SubtotalItem.ToString("N2")</td>
+                        <th>Producto / Servicio</th>
+                        <th style="text-align:center">Cant.</th>
+                        <th style="text-align:right">Precio Unit.</th>
+                        <th style="text-align:right">Subtotal</th>
                     </tr>
-                }
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="4" style="text-align:right;">TOTAL</td>
-                    <td style="text-align:right;">$@Model.Total.ToString("N2")</td>
-                </tr>
-            </tfoot>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var d in detalles)
+                    {
+                        <tr>
+                            <td>@d.NombreProducto</td>
+                            <td style="text-align:center">@d.Cantidad.ToString("N0")</td>
+                            <td style="text-align:right">$@d.PrecioUnitario.ToString("N2")</td>
+                            <td style="text-align:right">$@d.SubtotalItem.ToString("N2")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" style="text-align:right;">TOTAL sin interés</td>
+                        <td style="text-align:right;">$@Model.Total.ToString("N2")</td>
+                    </tr>
+                    @if (Model.TotalConInteres > Model.Total)
+                    {
+                        <tr>
+                            <td colspan="3" style="text-align:right; color:#e74c3c;">
+                                Interés (@Model.Interes.ToString("N2")%) — TOTAL con interés
+                            </td>
+                            <td style="text-align:right; color:#e74c3c; font-weight:bold;">
+                                $@Model.TotalConInteres.ToString("N2")
+                            </td>
+                        </tr>
+                    }
+                </tfoot>
+            </table>
+        </div>
 
+        
         @if (cuotas != null && cuotas.Any())
         {
             <div style="margin-top:20px;">
                 <h6 style="color:#2d5a27; font-weight:700; border-bottom:2px solid #2d5a27; padding-bottom:6px;">
                     📋 Plan de Cuotas
                 </h6>
-                <table class="table tabla-boleta mb-0">
-                    <thead>
-                        <tr>
-                            <th style="text-align:center">Cuota</th>
-                            <th>Vencimiento</th>
-                            <th style="text-align:right">Monto</th>
-                            <th style="text-align:center">Interés</th>
-                            <th style="text-align:right">Saldo</th>
-                            <th style="text-align:center">Estado</th>
-                            <th class="no-print">Pagar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var c in cuotas)
-                        {
+                <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
+                    <table class="table tabla-boleta mb-0" style="min-width:500px;">
+                        <thead>
                             <tr>
-                                <td style="text-align:center">@c.NumeroCuota</td>
-                                <td>@c.FechaVencimiento.ToString("dd/MM/yyyy")</td>
-                                <td style="text-align:right">$@c.MontoCuota.ToString("N2")</td>
-                                <td style="text-align:center">
-                                    @if (c.Interes > 0)
-                                    {
-                                        @c.Interes.ToString("N2") <text>%</text>
-                                    }
-                                    else
-                                    {
-
-                                        <text>Sin interés</text>
-                                    }
-                                </td>
-                                <td style="text-align:right">$@c.SaldoPendiente.ToString("N2")</td>
-                                <td style="text-align:center">
-                                    @if (c.EstadoCuota == "Pagada")
-                                    {
-                                        <span class="estado-pagado">✅ Pagada</span>
-                                    }
-                                    else if (c.FechaVencimiento < DateTime.Today)
-                                    {
-
-                                        <span class="estado-cancelado">⚠️ Vencida</span>
-                                    }
-                                    else
-                                    {
-
-                                        <span class="estado-pendiente">⏳ Pendiente</span>
-                                    }
-                                </td>
-                                <td class="no-print">
-                                    @if (c.EstadoCuota != "Pagada")
-                                    {
-                                        <form method="post" action="/Venta/PagarCuotaVenta" style="display:flex; gap:5px;">
-                                            <input type="hidden" name="idCuota" value="@c.IdCuota" />
-                                            <input type="number" name="montoPago"
-                                                   class="form-control form-control-sm"
-                                                   style="width:90px"
-                                                   value="@c.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
-                                                   step="0.01" min="0.01"
-                                                   max="@c.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
-                                            <button type="submit" class="btn btn-success btn-sm"
-                                                    onclick="return confirm('¿Confirmar pago?')">
-                                                ✅ Pagar
-                                            </button>
-                                        </form>
-                                    }
-                                    else
-                                    {
-                                        <span style="color:#888; font-size:0.85rem;">— Pagada —</span>
-                                    }
-                                </td>
+                                <th style="text-align:center">Cuota</th>
+                                <th>Vencimiento</th>
+                                <th style="text-align:right">Monto</th>
+                                <th style="text-align:center">Interés</th>
+                                <th style="text-align:right">Saldo</th>
+                                <th style="text-align:center">Estado</th>
+                                <th class="no-print">Pagar</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in cuotas)
+                            {
+                                <tr>
+                                    <td style="text-align:center">@c.NumeroCuota</td>
+                                    <td>@c.FechaVencimiento.ToString("dd/MM/yyyy")</td>
+                                    <td style="text-align:right">$@c.MontoCuota.ToString("N2")</td>
+                                    <td style="text-align:center">
+                                        @if (c.Interes > 0)
+                                        {
+                                            @c.Interes.ToString("N2")
+                                
+                                            <text>%</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Sin interés</text>
+                                        }
+                                    </td>
+                                    <td style="text-align:right">$@c.SaldoPendiente.ToString("N2")</td>
+                                    <td style="text-align:center">
+                                        @if (c.EstadoCuota == "Pagada")
+                                        {
+                                            <span class="estado-pagado">✅ Pagada</span>
+                                        }
+                                        else if (c.FechaVencimiento < DateTime.Today)
+                                        {
+                                            <span class="estado-cancelado">⚠️ Vencida</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="estado-pendiente">⏳ Pendiente</span>
+                                        }
+                                    </td>
+                                    <td class="no-print" style="white-space:nowrap;">
+                                        @if (c.EstadoCuota != "Pagada")
+                                        {
+                                            <form method="post" action="/Venta/PagarCuotaVenta" style="display:flex; gap:5px;">
+                                                <input type="hidden" name="idCuota" value="@c.IdCuota" />
+                                                <input type="number" name="montoPago"
+                                                       class="form-control form-control-sm"
+                                                       style="width:90px"
+                                                       value="@c.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
+                                                       step="0.01" min="0.01"
+                                                       max="@c.SaldoPendiente.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
+                                                <button type="submit" class="btn btn-success btn-sm"
+                                                        onclick="return confirm('¿Confirmar pago?')">
+                                                    ✅ Pagar
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span style="color:#888; font-size:0.85rem;">— Pagada —</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         }
 
@@ -271,7 +287,8 @@
             </div>
         }
 
-        <div style="margin-top:30px; border-top:2px dashed #ccc; padding-top:20px; display:flex; justify-content:space-between; align-items:center;">
+       
+        <div style="margin-top:30px; border-top:2px dashed #ccc; padding-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <div style="font-size:0.8rem; color:#888;">
                 <p style="margin:0;">Agroveterinaria El Nogal</p>
                 <p style="margin:0;">Gracias por su confianza</p>
@@ -281,6 +298,5 @@
                 <p style="margin:0;">Sistema de Gestión El Nogal</p>
             </div>
         </div>
-
     </div>
 </div>
